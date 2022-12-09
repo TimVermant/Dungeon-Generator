@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02affba88803e0e429b66050bf2fb9a2, type: 3}
+  m_Name: CornerLeftBottom
+  m_EditorClassIdentifier: 
+  CellPrefab: {fileID: 2382756234909974646, guid: c4a069fa7f02f6d4e89aec2b43ba4740, type: 3}
+  AllowedNeighbourCell:
+  - Direction: 0
+    PossibleVariations:
+    - {fileID: 11400000, guid: 59fdcb2075a83c947829c088aa8db391, type: 2}
+    - {fileID: 11400000, guid: c15546f883ad35343a4e0e9b34f9ef16, type: 2}
+  - Direction: 1
+    PossibleVariations:
+    - {fileID: 11400000, guid: c15546f883ad35343a4e0e9b34f9ef16, type: 2}
+    - {fileID: 11400000}
+    - {fileID: 11400000, guid: ff83dc620980b1841b1eba56db037b96, type: 2}
+  - Direction: 2
+    PossibleVariations:
+    - {fileID: 11400000, guid: 9904f521fcbbe4b43abba5e19d5a302b, type: 2}
+    - {fileID: 11400000, guid: 7059917d466e6bb41be8e800b63827b0, type: 2}
+  - Direction: 3
+    PossibleVariations:
+    - {fileID: 11400000, guid: 7059917d466e6bb41be8e800b63827b0, type: 2}
+    - {fileID: 11400000, guid: 6da711bc5888ea840ba3ad61087c5227, type: 2}
+    - {fileID: 11400000, guid: d3992bf2f5466f64e9a9bb0e782a999f, type: 2}
