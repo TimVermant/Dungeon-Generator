@@ -15,10 +15,20 @@ MonoBehaviour:
   CellPrefab: {fileID: 8572759830029665554, guid: 0bd6a86d49568de40bc78256f8decb15, type: 3}
   AllowedNeighbourCell:
   - Direction: 0
-    PossibleVariations: []
+    PossibleVariations:
+    - {fileID: 11400000, guid: 6da711bc5888ea840ba3ad61087c5227, type: 2}
+    - {fileID: 11400000, guid: d3992bf2f5466f64e9a9bb0e782a999f, type: 2}
   - Direction: 1
-    PossibleVariations: []
+    PossibleVariations:
+    - {fileID: 11400000, guid: 6da711bc5888ea840ba3ad61087c5227, type: 2}
+    - {fileID: 11400000, guid: c15546f883ad35343a4e0e9b34f9ef16, type: 2}
+    - {fileID: 11400000, guid: ff83dc620980b1841b1eba56db037b96, type: 2}
   - Direction: 2
-    PossibleVariations: []
+    PossibleVariations:
+    - {fileID: 11400000, guid: 8dd77c34d2456914b8792e1424a4b25b, type: 2}
+    - {fileID: 11400000, guid: c15546f883ad35343a4e0e9b34f9ef16, type: 2}
+    - {fileID: 11400000, guid: 59fdcb2075a83c947829c088aa8db391, type: 2}
   - Direction: 3
-    PossibleVariations: []
+    PossibleVariations:
+    - {fileID: 11400000, guid: 9904f521fcbbe4b43abba5e19d5a302b, type: 2}
+    - {fileID: 11400000, guid: 8dd77c34d2456914b8792e1424a4b25b, type: 2}
