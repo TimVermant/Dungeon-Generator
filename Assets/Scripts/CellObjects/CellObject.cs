@@ -7,6 +7,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/CellObject", order = 1)]
 public class CellObject : ScriptableObject
 {
+    public int Identifier; // Used to easily identify each scriptable object
     public GameObject CellPrefab;
 
     // Using an enum to get the correct list of cellobjects to see whats allowed

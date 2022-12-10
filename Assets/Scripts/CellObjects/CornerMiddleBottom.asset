@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02affba88803e0e429b66050bf2fb9a2, type: 3}
   m_Name: CornerMiddleBottom
   m_EditorClassIdentifier: 
+  Identifier: 3
   CellPrefab: {fileID: 813895977373426358, guid: a4d47ecf9993e6248978e9be0cd2f58d, type: 3}
   AllowedNeighbourCell:
   - Direction: 0
