@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DungeonGenerator;
 
 public class Generator : MonoBehaviour
 {
     [Header("Grid setup")]
-    [SerializeField] private Grid _grid;
+    [SerializeField] private DungeonGenerator.Grid _grid;
     [SerializeField] private int _rows;
     [SerializeField] private int _columns;
     [SerializeField] private Transform _gridParent;
@@ -18,7 +19,9 @@ public class Generator : MonoBehaviour
 
     public void CollapseGrid()
     {
-        ResetValues();
+        ClearGrid();
+        _iterationCounter = 0;
+        _grid.SetupGrid(_rows, _columns);
         while (!IsCollapsed())
         {
             if (!_loopTillEnd && _iterationCounter >= _maxIterations)
@@ -38,15 +41,13 @@ public class Generator : MonoBehaviour
 
     public void ClearGrid()
     {
-        foreach (List<Cell> cells in _grid.Cells)
+          
+        while(_gridParent.childCount > 0)
         {
-            foreach (Cell cell in cells)
-            {
-                cell.DestroyCell();
+            DestroyImmediate(_gridParent.GetChild(0).gameObject);
 
-            }
         }
-
+        _grid.Cells.Clear();
     }
 
 
@@ -58,6 +59,7 @@ public class Generator : MonoBehaviour
         {
             return false;
         }
+        //Debug.Log(cell.Row + " - " + cell.Column);
         _grid.CollapseCell(cell, _gridParent);
         
 
@@ -66,13 +68,7 @@ public class Generator : MonoBehaviour
 
 
 
-    private void ResetValues()
-    {
-        _grid.Cells.Clear();
-        _grid.SetupGrid(_rows, _columns);
-        _iterationCounter = 0;
-    }
-
+  
     private bool IsCollapsed()
     {
         foreach (List<Cell> cells in _grid.Cells)

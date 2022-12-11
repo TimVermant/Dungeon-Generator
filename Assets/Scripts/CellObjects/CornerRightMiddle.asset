@@ -20,15 +20,19 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 9904f521fcbbe4b43abba5e19d5a302b, type: 2}
     - {fileID: 11400000, guid: 7059917d466e6bb41be8e800b63827b0, type: 2}
     - {fileID: 11400000, guid: 8dd77c34d2456914b8792e1424a4b25b, type: 2}
+    HasWall: 1
   - Direction: 1
     PossibleVariations:
     - {fileID: 11400000, guid: 9904f521fcbbe4b43abba5e19d5a302b, type: 2}
     - {fileID: 11400000, guid: 1097f67dde3cf6548a462f4efb8bfda3, type: 2}
+    HasWall: 0
   - Direction: 2
     PossibleVariations:
     - {fileID: 11400000, guid: 6da711bc5888ea840ba3ad61087c5227, type: 2}
     - {fileID: 11400000}
+    HasWall: 0
   - Direction: 3
     PossibleVariations:
     - {fileID: 11400000}
     - {fileID: 11400000, guid: c15546f883ad35343a4e0e9b34f9ef16, type: 2}
+    HasWall: 0
