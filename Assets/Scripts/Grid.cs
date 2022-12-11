@@ -6,8 +6,6 @@ using UnityEngine;
 namespace DungeonGenerator
 {
 
-
-
     public class Grid : MonoBehaviour
     {
 
@@ -61,21 +59,36 @@ namespace DungeonGenerator
         // Public
         public Cell GetLowestEntropyCell(bool canBeCollapsed = false)
         {
+            Cell lowestCell = GetRandomUncollapsedCell();
             int entropy = _potentialCells.Count + 1;
-            Cell lowestCell = GetRandomCell();
+            List<Cell> lowestCells = new();
             foreach (List<Cell> cellList in Cells)
             {
                 foreach (Cell cell in cellList)
                 {
                     int newEntropy = GetEntropy(cell);
-                    if (newEntropy < entropy && canBeCollapsed == cell.IsCollapsed)
+                    if (canBeCollapsed == cell.IsCollapsed)
                     {
-                        entropy = newEntropy;
-                        lowestCell = cell;
+                        if (newEntropy < entropy)
+                        {
+                            entropy = newEntropy;
+                            lowestCells.Clear();
+                            lowestCells.Add(cell);
+                        }
+                        else if (newEntropy == entropy)
+                        {
+                            lowestCells.Add(cell);
+                        }
                     }
                 }
             }
 
+            
+            if (lowestCells.Count > 0)
+            {
+                lowestCell = lowestCells[Random.Range(0, lowestCells.Count - 1)];
+        
+            }
             return lowestCell;
         }
 
@@ -87,9 +100,9 @@ namespace DungeonGenerator
             int column = cell.Column;
             List<Cell> neighbours = new List<Cell>();
             neighbours.Add(GetCell(row + 1, column)); // Right
-            neighbours.Add(GetCell(row, column - 1)); // Back
-            neighbours.Add(GetCell(row - 1, column)); // Left
             neighbours.Add(GetCell(row, column + 1)); // Front
+            neighbours.Add(GetCell(row - 1, column)); // Left
+            neighbours.Add(GetCell(row, column - 1)); // Back
 
             return neighbours;
         }
@@ -117,7 +130,12 @@ namespace DungeonGenerator
             {
                 return _potentialCells.Count;
             }
+            else if (neighbours.Count == 1)
+            {
+                return neighbours[0].CurrentCellObject.AllowedNeighbourCell.Count;
+            }
             List<CellObject> cellOptions = GetAllPossibleVariations(cell, neighbours);
+
 
 
             return cellOptions.Count;
@@ -185,6 +203,15 @@ namespace DungeonGenerator
             return overlappingValues;
         }
 
+        private Cell GetRandomUncollapsedCell()
+        {
+            Cell cell = GetRandomCell();
+            while(cell.IsCollapsed)
+            {
+                cell = GetRandomCell();
+            }
+            return cell;
+        }
 
         private Cell GetRandomCell()
         {
@@ -220,11 +247,11 @@ namespace DungeonGenerator
         {
             int rowDif = from.Row - to.Row;
             int colDif = from.Column - to.Column;
-            if (colDif == 1)
+            if (colDif == -1)
             {
                 return CellDirection.Front;
             }
-            else if (colDif == -1)
+            else if (colDif == 1)
             {
                 return CellDirection.Back;
             }

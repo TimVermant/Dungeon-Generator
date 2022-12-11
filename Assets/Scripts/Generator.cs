@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using DungeonGenerator;
+
 
 public class Generator : MonoBehaviour
 {
@@ -22,18 +22,14 @@ public class Generator : MonoBehaviour
         ClearGrid();
         _iterationCounter = 0;
         _grid.SetupGrid(_rows, _columns);
-        while (!IsCollapsed())
+        while (_iterationCounter < _rows * _columns)
         {
             if (!_loopTillEnd && _iterationCounter >= _maxIterations)
             {
                 break;
             }
 
-            // Break loop when CollapseCell can't find any cells to collapse anymore
-            if (!CollapseCell())
-            {
-                break;
-            }
+            CollapseCell();
             ++_iterationCounter;
         }
         Debug.Log("You finished after " + _iterationCounter + " iterations");
@@ -51,19 +47,12 @@ public class Generator : MonoBehaviour
     }
 
 
-    private bool CollapseCell()
+    private void CollapseCell()
     {
         // Find and collapse lowest entropy cell
         Cell cell = _grid.GetLowestEntropyCell();
-        if (cell.IsCollapsed)
-        {
-            return false;
-        }
-        //Debug.Log(cell.Row + " - " + cell.Column);
-        _grid.CollapseCell(cell, _gridParent);
-        
 
-        return true;
+        _grid.CollapseCell(cell, _gridParent);
     }
 
 
