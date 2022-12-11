@@ -8,6 +8,7 @@ public class Cell
     // Scriptable object containing the data required for the WFC 
     public CellObject CurrentCellObject { get; private set; }
     public bool IsCollapsed { get; private set; }
+    public bool IsOutsideEdge { get; private set; }
     public int Row { get; private set; }
     public int Column { get; private set; }
 
@@ -21,6 +22,12 @@ public class Cell
         Row = row;
         Column = col;
 
+    }
+
+    public void CollapseEdgeCell()
+    {
+        IsOutsideEdge = true;
+        IsCollapsed = true;
     }
 
     public void Collapse(CellObject cellObject)

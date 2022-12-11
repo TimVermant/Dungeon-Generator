@@ -11,7 +11,7 @@ namespace DungeonGenerator
 
         public List<List<Cell>> Cells { get; private set; } = new List<List<Cell>>();
         [SerializeField] private List<CellObject> _potentialCells = new List<CellObject>();
-
+        private List<CellDirection> _possibleDirections = new() { CellDirection.Right, CellDirection.Left, CellDirection.Front, CellDirection.Back };
         private int _rowSize;
         private int _columnSize;
         private float _gridSize = 2.0f; // The size of the prefab pieces 
@@ -29,6 +29,10 @@ namespace DungeonGenerator
                 {
                     Cell cell = new();
                     cell.InitializeCell(row, col);
+                    if (!IsValidIndex(row, col))
+                    {
+                        cell.CollapseEdgeCell();
+                    }
                     Cells[row].Add(cell);
                 }
             }
@@ -83,11 +87,11 @@ namespace DungeonGenerator
                 }
             }
 
-            
+
             if (lowestCells.Count > 0)
             {
                 lowestCell = lowestCells[Random.Range(0, lowestCells.Count - 1)];
-        
+
             }
             return lowestCell;
         }
@@ -114,30 +118,30 @@ namespace DungeonGenerator
             List<Cell> uniqueList = new();
             foreach (Cell cellItem in neighbours)
             {
-                if (cellItem != null && cellItem.IsCollapsed)
+
+                if (cellItem != null)
                 {
-                    uniqueList.Add(cellItem);
+                    if (cellItem.IsCollapsed)
+                    {
+                        uniqueList.Add(cellItem);
+                    }
+                }
+                else
+                {
+                    Cell edgeCell = new();
+                    edgeCell.CollapseEdgeCell();
+                    uniqueList.Add(edgeCell);
                 }
             }
             return uniqueList;
         }
 
+
+
         private int GetEntropy(Cell cell)
         {
             List<Cell> neighbours = GetCollapsedNeighbours(cell);
-            // Return max possible options when there are no neighbours yet
-            if (neighbours.Count <= 0)
-            {
-                return _potentialCells.Count;
-            }
-            else if (neighbours.Count == 1)
-            {
-                return neighbours[0].CurrentCellObject.AllowedNeighbourCell.Count;
-            }
             List<CellObject> cellOptions = GetAllPossibleVariations(cell, neighbours);
-
-
-
             return cellOptions.Count;
         }
 
@@ -170,43 +174,88 @@ namespace DungeonGenerator
         {
 
             List<CellObject> cellOptions = new List<CellObject>();
-
             foreach (Cell cellItem in uniqueNeighbours)
             {
 
                 // Find out the direction from the neighbour to the mainCell
                 CellDirection direction = GetDirection(cellItem, mainCell);
-                // Add options from that specific direction
-                CellObjectNeighbourRules rules = GetNeighbourRules(cellItem, direction);
-                if (rules != null)
+                CellDirection oppositeDirection = GetDirection(mainCell, cellItem);
+                bool hasWall = false;
+                if (cellItem.IsOutsideEdge)
                 {
-                    cellOptions.AddRange(rules.PossibleVariations);
+                    hasWall = true;
 
                 }
-
+                else
+                {
+                    hasWall = cellItem.CurrentCellObject.HasWall(direction);
+                }
+                // Add option if it has a wall in that direction
+                foreach (CellObject potentialCell in _potentialCells)
+                {
+                    if (potentialCell.HasWall(oppositeDirection) == hasWall)
+                    {
+                        cellOptions.Add(potentialCell);
+                    }
+                }
             }
 
+            cellOptions = GetOnlyPossibleVariations(mainCell, uniqueNeighbours, cellOptions);
 
-            List<CellObject> uniqueValues = new List<CellObject>();
-            List<CellObject> overlappingValues = new List<CellObject>();
-            foreach (CellObject cellItem in cellOptions)
+            return cellOptions;
+        }
+
+        private List<CellObject> GetOnlyPossibleVariations(Cell mainCell, List<Cell> uniqueNeighbours, List<CellObject> options)
+        {
+
+            List<CellObject> cellOptions = new(options);
+            List<CellObject> duplicates = new();
+            List<CellObject> finalList = new();
+            foreach (Cell cellItem in uniqueNeighbours)
             {
 
-                uniqueValues.Add(cellItem);
-                if (uniqueValues.Contains(cellItem))
+                // Find out the direction from the neighbour to the mainCell
+                CellDirection neighbourToMain = GetDirection(cellItem, mainCell);
+                CellDirection mainToNeighbour = GetDirection(mainCell, cellItem);
+                bool hasWall = false;
+                if (cellItem.IsOutsideEdge)
                 {
-                    overlappingValues.Add(cellItem);
+                    hasWall = true;
 
+                }
+                else
+                {
+                    hasWall = cellItem.CurrentCellObject.HasWall(neighbourToMain);
+                }
+                // Add option if it has a wall in that direction
+                foreach (CellObject potentialCell in options)
+                {
+                 
+                    if (potentialCell.HasWall(mainToNeighbour) != hasWall)
+                    {
+                        cellOptions.Remove(potentialCell);
+                    }
+
+                
+                   
+                }
+   
+            }
+            foreach (CellObject potentialCell in cellOptions)
+            {
+                if (!finalList.Contains(potentialCell))
+                {
+                    finalList.Add(potentialCell);
                 }
             }
 
-            return overlappingValues;
+            return finalList;
         }
 
         private Cell GetRandomUncollapsedCell()
         {
             Cell cell = GetRandomCell();
-            while(cell.IsCollapsed)
+            while (cell.IsCollapsed)
             {
                 cell = GetRandomCell();
             }
@@ -220,6 +269,7 @@ namespace DungeonGenerator
 
 
 
+
         // Helpers
         private Cell GetCell(Cell cell)
         {
@@ -230,11 +280,16 @@ namespace DungeonGenerator
         {
             if (!IsValidIndex(row, col))
             {
-                return null;
+                Cell cell = new();
+                cell.InitializeCell(row, col);
+                cell.CollapseEdgeCell();
+                return cell;
             }
 
             return Cells[row][col];
         }
+
+
 
 
         private bool IsValidIndex(int row, int col)
@@ -255,11 +310,11 @@ namespace DungeonGenerator
             {
                 return CellDirection.Back;
             }
-            else if (rowDif == 1)
+            else if (rowDif == -1)
             {
                 return CellDirection.Right;
             }
-            else if (rowDif == -1)
+            else if (rowDif == 1)
             {
                 return CellDirection.Left;
             }
