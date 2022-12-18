@@ -7,16 +7,15 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/CellObject", order = 1)]
 public class CellObject : ScriptableObject
 {
-    public int Identifier; // Used to easily identify each scriptable object
     public GameObject CellPrefab;
     
     // Using an enum to get the correct list of cellobjects to see whats allowed
-    public List<CellObjectNeighbourRules> AllowedNeighbourCell;
+    public List<CellObjectNeighbbourDirection> AllowedNeighbourCell;
     
     [HideInInspector]
-    public CellObjectNeighbourRules GetAllowedNeighbourInDirection(CellDirection direction)
+    public CellObjectNeighbbourDirection GetAllowedNeighbourInDirection(CellDirection direction)
     {
-        foreach(CellObjectNeighbourRules cellObjectNeighbourRules in AllowedNeighbourCell)
+        foreach(CellObjectNeighbbourDirection cellObjectNeighbourRules in AllowedNeighbourCell)
         {
             if(cellObjectNeighbourRules.Direction == direction)
             {
@@ -28,16 +27,15 @@ public class CellObject : ScriptableObject
   
     public bool HasWall(CellDirection direction)
     {
-        CellObjectNeighbourRules cellObjectNeighbourRules = GetAllowedNeighbourInDirection(direction);
-        return cellObjectNeighbourRules.HasWall;
+        CellObjectNeighbbourDirection cellObjectNeighbourDirection = GetAllowedNeighbourInDirection(direction);
+        return cellObjectNeighbourDirection.HasWall;
     }
 }
 
 [Serializable]
-public class CellObjectNeighbourRules
+public class CellObjectNeighbbourDirection
 {
     public CellDirection Direction;
-    public List<CellObject> PossibleVariations;
     public bool HasWall;
 }
 

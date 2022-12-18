@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 02affba88803e0e429b66050bf2fb9a2, type: 3}
-  m_Name: CornerLeftBottom
+  m_Name: CornerSW
   m_EditorClassIdentifier: 
   Identifier: 0
   CellPrefab: {fileID: 2382756234909974646, guid: c4a069fa7f02f6d4e89aec2b43ba4740, type: 3}

@@ -40,6 +40,7 @@ namespace DungeonGenerator
 
 
 
+        // Base function that calculates the cell value based on its entropy
         public void CollapseCell(Cell cell, Transform parent)
         {
             CellObject value = CalculateCellValue(cell);
@@ -71,6 +72,10 @@ namespace DungeonGenerator
                 foreach (Cell cell in cellList)
                 {
                     int newEntropy = GetEntropy(cell);
+                    if(newEntropy <= 0)
+                    {
+                        continue;
+                    }
                     if (canBeCollapsed == cell.IsCollapsed)
                     {
                         if (newEntropy < entropy)
@@ -86,7 +91,7 @@ namespace DungeonGenerator
                     }
                 }
             }
-
+            Debug.Log(entropy);
 
             if (lowestCells.Count > 0)
             {
@@ -207,7 +212,10 @@ namespace DungeonGenerator
 
         private List<CellObject> GetOnlyPossibleVariations(Cell mainCell, List<Cell> uniqueNeighbours, List<CellObject> options)
         {
-
+            if(mainCell.Row == 2 &&mainCell.Column == 2)
+            {
+                Debug.Log("LKSJAD");
+            }
             List<CellObject> cellOptions = new(options);
             List<CellObject> duplicates = new();
             List<CellObject> finalList = new();
@@ -333,31 +341,7 @@ namespace DungeonGenerator
             return (CellDirection)dir;
         }
 
-        private bool HasWall(Cell from, Cell to)
-        {
-            CellDirection direction = GetDirection(from, to);
-            return GetNeighbourRules(from, direction).HasWall;
-
-        }
-
-
-
-        private CellObjectNeighbourRules GetNeighbourRules(Cell cell, CellDirection direction)
-        {
-            if (cell.CurrentCellObject == null)
-            {
-                return null;
-            }
-            foreach (CellObjectNeighbourRules cellNeighbour in cell.CurrentCellObject.AllowedNeighbourCell)
-            {
-                if (cellNeighbour.Direction == direction)
-                {
-                    return cellNeighbour;
-                }
-            }
-            return null;
-        }
-
+    
 
     }
 }
