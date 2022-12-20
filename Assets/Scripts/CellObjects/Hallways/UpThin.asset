@@ -13,12 +13,13 @@ MonoBehaviour:
   m_Name: UpThin
   m_EditorClassIdentifier: 
   CellPrefab: {fileID: 3370682019328031359, guid: 804584ab1eb70694f8f01c895bb2d8fb, type: 3}
+  Weight: 0.5
   AllowedNeighbourCell:
   - Direction: 0
-    HasWall: 1
+    HasWall: 0
   - Direction: 1
-    HasWall: 1
+    HasWall: 0
   - Direction: 2
-    HasWall: 0
+    HasWall: 1
   - Direction: 3
-    HasWall: 0
+    HasWall: 1

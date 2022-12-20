@@ -12,13 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02affba88803e0e429b66050bf2fb9a2, type: 3}
   m_Name: SideThin
   m_EditorClassIdentifier: 
-  CellPrefab: {fileID: 5300779209070311363, guid: 9b55f7af1c471564d825d8d80d87eae9, type: 3}
+  CellPrefab: {fileID: 8811818625674517288, guid: 67a52c72373cc904da8361f36d195dd5, type: 3}
+  Weight: 0.5
   AllowedNeighbourCell:
   - Direction: 0
-    HasWall: 0
+    HasWall: 1
   - Direction: 1
-    HasWall: 0
+    HasWall: 1
   - Direction: 2
-    HasWall: 1
+    HasWall: 0
   - Direction: 3
-    HasWall: 1
+    HasWall: 0

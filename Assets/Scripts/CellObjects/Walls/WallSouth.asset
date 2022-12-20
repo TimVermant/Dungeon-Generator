@@ -12,27 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02affba88803e0e429b66050bf2fb9a2, type: 3}
   m_Name: WallSouth
   m_EditorClassIdentifier: 
-  Identifier: 3
   CellPrefab: {fileID: 813895977373426358, guid: a4d47ecf9993e6248978e9be0cd2f58d, type: 3}
+  Weight: 0.1
   AllowedNeighbourCell:
   - Direction: 0
-    PossibleVariations:
-    - {fileID: 11400000}
-    - {fileID: 11400000, guid: c15546f883ad35343a4e0e9b34f9ef16, type: 2}
     HasWall: 0
   - Direction: 1
-    PossibleVariations:
-    - {fileID: 11400000}
-    - {fileID: 11400000, guid: 8dd77c34d2456914b8792e1424a4b25b, type: 2}
     HasWall: 0
   - Direction: 2
-    PossibleVariations:
-    - {fileID: 11400000, guid: 1097f67dde3cf6548a462f4efb8bfda3, type: 2}
-    - {fileID: 11400000, guid: d3992bf2f5466f64e9a9bb0e782a999f, type: 2}
     HasWall: 0
   - Direction: 3
-    PossibleVariations:
-    - {fileID: 11400000, guid: d3992bf2f5466f64e9a9bb0e782a999f, type: 2}
-    - {fileID: 11400000, guid: 6da711bc5888ea840ba3ad61087c5227, type: 2}
-    - {fileID: 11400000, guid: 7059917d466e6bb41be8e800b63827b0, type: 2}
     HasWall: 1

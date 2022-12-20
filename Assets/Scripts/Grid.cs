@@ -91,7 +91,6 @@ namespace DungeonGenerator
                     }
                 }
             }
-            Debug.Log(entropy);
 
             if (lowestCells.Count > 0)
             {
@@ -160,16 +159,11 @@ namespace DungeonGenerator
             // Randomize if no neighbours
             if (potentialValues.Count == 0)
             {
-                int index = Random.Range(0, _potentialCells.Count - 1);
-                cellValue = _potentialCells[index];
-
+                cellValue = GetWeightedValue(_potentialCells);
             }
             else
             {
-
-                int index = Random.Range(0, potentialValues.Count - 1);
-                cellValue = potentialValues[index];
-
+                cellValue = GetWeightedValue(potentialValues); 
             }
             return cellValue;
         }
@@ -212,10 +206,6 @@ namespace DungeonGenerator
 
         private List<CellObject> GetOnlyPossibleVariations(Cell mainCell, List<Cell> uniqueNeighbours, List<CellObject> options)
         {
-            if(mainCell.Row == 2 &&mainCell.Column == 2)
-            {
-                Debug.Log("LKSJAD");
-            }
             List<CellObject> cellOptions = new(options);
             List<CellObject> duplicates = new();
             List<CellObject> finalList = new();
@@ -341,7 +331,36 @@ namespace DungeonGenerator
             return (CellDirection)dir;
         }
 
+        private CellObject GetWeightedValue(List<CellObject> potentialOptions)
+        {
+            float weightSum = 0.0f;
+            weightSum = GetWeightSum(potentialOptions);
+            float randomNumber = Random.Range(0, weightSum);
+            foreach(CellObject cellObject in potentialOptions)
+            {
+                if (Mathf.Abs(weightSum - cellObject.Weight) <= 0.0001f)
+                {
+                    return cellObject;
+                }
+                weightSum -= cellObject.Weight;
+
+            }
+            Debug.LogError("No valid weighted value found: " + weightSum);
+            
+            return null;
+
+        }
     
+
+        private float GetWeightSum(List<CellObject> potentialOptions)
+        {
+            float weightSum = 0.0f;
+            foreach (CellObject option in potentialOptions)
+            {
+                weightSum += option.Weight;
+            }
+            return weightSum;
+        }
 
     }
 }

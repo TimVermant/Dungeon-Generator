@@ -12,28 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02affba88803e0e429b66050bf2fb9a2, type: 3}
   m_Name: CornerSE
   m_EditorClassIdentifier: 
-  Identifier: 6
   CellPrefab: {fileID: 8572759830029665554, guid: b154a714c0c643145b03969bf95fe6a0, type: 3}
+  Weight: 0.2
   AllowedNeighbourCell:
   - Direction: 0
-    PossibleVariations:
-    - {fileID: 11400000, guid: 8dd77c34d2456914b8792e1424a4b25b, type: 2}
-    - {fileID: 11400000, guid: 9904f521fcbbe4b43abba5e19d5a302b, type: 2}
-    - {fileID: 11400000, guid: 7059917d466e6bb41be8e800b63827b0, type: 2}
     HasWall: 1
   - Direction: 1
-    PossibleVariations:
-    - {fileID: 11400000, guid: 8dd77c34d2456914b8792e1424a4b25b, type: 2}
-    - {fileID: 11400000, guid: 59fdcb2075a83c947829c088aa8db391, type: 2}
     HasWall: 0
   - Direction: 2
-    PossibleVariations:
-    - {fileID: 11400000, guid: ff83dc620980b1841b1eba56db037b96, type: 2}
-    - {fileID: 11400000, guid: 6da711bc5888ea840ba3ad61087c5227, type: 2}
     HasWall: 0
   - Direction: 3
-    PossibleVariations:
-    - {fileID: 11400000, guid: 7059917d466e6bb41be8e800b63827b0, type: 2}
-    - {fileID: 11400000, guid: 6da711bc5888ea840ba3ad61087c5227, type: 2}
-    - {fileID: 11400000, guid: d3992bf2f5466f64e9a9bb0e782a999f, type: 2}
     HasWall: 1

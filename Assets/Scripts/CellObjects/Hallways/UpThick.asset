@@ -13,12 +13,13 @@ MonoBehaviour:
   m_Name: UpThick
   m_EditorClassIdentifier: 
   CellPrefab: {fileID: 5961389446382035611, guid: f9c58f10527a07f4fbda2f2a3a9fb4d0, type: 3}
+  Weight: 0.8
   AllowedNeighbourCell:
   - Direction: 0
-    HasWall: 1
+    HasWall: 0
   - Direction: 1
-    HasWall: 1
+    HasWall: 0
   - Direction: 2
-    HasWall: 0
+    HasWall: 1
   - Direction: 3
-    HasWall: 0
+    HasWall: 1

@@ -8,10 +8,11 @@ using UnityEngine;
 public class CellObject : ScriptableObject
 {
     public GameObject CellPrefab;
+    [Range(0f, 1f)]
+    public float Weight = 1f;
     
-    // Using an enum to get the correct list of cellobjects to see whats allowed
+
     public List<CellObjectNeighbbourDirection> AllowedNeighbourCell;
-    
     [HideInInspector]
     public CellObjectNeighbbourDirection GetAllowedNeighbourInDirection(CellDirection direction)
     {
