@@ -72,7 +72,7 @@ namespace DungeonGenerator
                 foreach (Cell cell in cellList)
                 {
                     int newEntropy = GetEntropy(cell);
-                    if(newEntropy <= 0)
+                    if (newEntropy <= 0)
                     {
                         continue;
                     }
@@ -163,7 +163,7 @@ namespace DungeonGenerator
             }
             else
             {
-                cellValue = GetWeightedValue(potentialValues); 
+                cellValue = GetWeightedValue(potentialValues);
             }
             return cellValue;
         }
@@ -228,16 +228,16 @@ namespace DungeonGenerator
                 // Add option if it has a wall in that direction
                 foreach (CellObject potentialCell in options)
                 {
-                 
+
                     if (potentialCell.HasWall(mainToNeighbour) != hasWall)
                     {
                         cellOptions.Remove(potentialCell);
                     }
 
-                
-                   
+
+
                 }
-   
+
             }
             foreach (CellObject potentialCell in cellOptions)
             {
@@ -333,11 +333,17 @@ namespace DungeonGenerator
 
         private CellObject GetWeightedValue(List<CellObject> potentialOptions)
         {
-            float weightSum = 0.0f;
-            weightSum = GetWeightSum(potentialOptions);
-            float randomNumber = Random.Range(0, weightSum);
-            foreach(CellObject cellObject in potentialOptions)
+            if (potentialOptions.Count == 1)
             {
+                return potentialOptions[0];
+            }
+            List<CellObject> shuffledList = GetShuffledObjects(potentialOptions);
+            float weightSum = 0.0f;
+            weightSum = GetWeightSum(shuffledList);
+            float randomNumber = Random.Range(0, weightSum);
+            foreach (CellObject cellObject in shuffledList)
+            {
+                // To account for floating point errors
                 if (Mathf.Abs(weightSum - cellObject.Weight) <= 0.0001f)
                 {
                     return cellObject;
@@ -346,11 +352,23 @@ namespace DungeonGenerator
 
             }
             Debug.LogError("No valid weighted value found: " + weightSum);
-            
+
             return null;
 
         }
-    
+
+        private List<CellObject> GetShuffledObjects(List<CellObject> potentialOptions)
+        {
+            List<CellObject> shuffledObjects = new List<CellObject>(potentialOptions);
+            for (int i = 0; i < shuffledObjects.Count; i++)
+            {
+                CellObject tempObj = shuffledObjects[i];
+                int randomIndex = Random.Range(i, shuffledObjects.Count);
+                shuffledObjects[i] = shuffledObjects[randomIndex];
+                shuffledObjects[randomIndex] = tempObj;
+            }
+            return shuffledObjects;
+        }
 
         private float GetWeightSum(List<CellObject> potentialOptions)
         {

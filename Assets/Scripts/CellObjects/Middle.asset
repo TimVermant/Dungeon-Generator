@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Middle
   m_EditorClassIdentifier: 
   CellPrefab: {fileID: 6647021833442842686, guid: 7dedfe4e10b23de4390a91e064de6189, type: 3}
-  Weight: 0
+  Weight: 0.961
   AllowedNeighbourCell:
   - Direction: 0
     HasWall: 0

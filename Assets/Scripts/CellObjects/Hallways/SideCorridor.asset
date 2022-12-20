@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 02affba88803e0e429b66050bf2fb9a2, type: 3}
-  m_Name: SideThin
+  m_Name: SideCorridor
   m_EditorClassIdentifier: 
-  CellPrefab: {fileID: 8811818625674517288, guid: 67a52c72373cc904da8361f36d195dd5, type: 3}
-  Weight: 0.5
+  CellPrefab: {fileID: 8811818625674517288, guid: ca472037bd13c7e4385115828385cc1d, type: 3}
+  Weight: 0.8
   AllowedNeighbourCell:
   - Direction: 0
     HasWall: 1

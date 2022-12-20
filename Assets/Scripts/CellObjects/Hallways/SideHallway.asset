@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 02affba88803e0e429b66050bf2fb9a2, type: 3}
-  m_Name: UpThick
+  m_Name: SideHallway
   m_EditorClassIdentifier: 
-  CellPrefab: {fileID: 5961389446382035611, guid: f9c58f10527a07f4fbda2f2a3a9fb4d0, type: 3}
-  Weight: 0.8
+  CellPrefab: {fileID: 8811818625674517288, guid: 67a52c72373cc904da8361f36d195dd5, type: 3}
+  Weight: 0.149
   AllowedNeighbourCell:
   - Direction: 0
-    HasWall: 0
+    HasWall: 1
   - Direction: 1
-    HasWall: 0
+    HasWall: 1
   - Direction: 2
-    HasWall: 1
+    HasWall: 0
   - Direction: 3
-    HasWall: 1
+    HasWall: 0
