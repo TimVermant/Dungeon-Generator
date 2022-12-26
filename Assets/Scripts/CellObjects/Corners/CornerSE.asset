@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: CornerSE
   m_EditorClassIdentifier: 
   CellPrefab: {fileID: 8572759830029665554, guid: b154a714c0c643145b03969bf95fe6a0, type: 3}
-  Weight: 1
+  Weight: 0.124
   AllowedNeighbourCell:
   - Direction: 0
     HasWall: 1

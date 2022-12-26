@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: WallNorth
   m_EditorClassIdentifier: 
   CellPrefab: {fileID: 8124586733967653419, guid: 43129ed9c88e0ed4691a03679967c7ed, type: 3}
-  Weight: 0.1
+  Weight: 0.639
   AllowedNeighbourCell:
   - Direction: 0
     HasWall: 0

@@ -9,6 +9,7 @@ public class Generator : MonoBehaviour
     [SerializeField] private DungeonGenerator.Grid _grid;
     [SerializeField] private int _rows;
     [SerializeField] private int _columns;
+    [SerializeField] private int _levels;
     [SerializeField] private Transform _gridParent;
 
     [Header("Algorithm variables")]
@@ -21,7 +22,7 @@ public class Generator : MonoBehaviour
     {
         ClearGrid();
         _iterationCounter = 0;
-        _grid.SetupGrid(_rows, _columns);
+        _grid.SetupGrid(_rows, _columns, _levels);
         while (_iterationCounter < _rows * _columns)
         {
             if (!_loopTillEnd && _iterationCounter >= _maxIterations)
@@ -37,8 +38,8 @@ public class Generator : MonoBehaviour
 
     public void ClearGrid()
     {
-          
-        while(_gridParent.childCount > 0)
+
+        while (_gridParent.childCount > 0)
         {
             DestroyImmediate(_gridParent.GetChild(0).gameObject);
 
@@ -57,17 +58,14 @@ public class Generator : MonoBehaviour
 
 
 
-  
+
     private bool IsCollapsed()
     {
-        foreach (List<Cell> cells in _grid.Cells)
+        foreach (Cell cell in _grid.Cells)
         {
-            foreach (Cell cell in cells)
+            if (!cell.IsCollapsed)
             {
-                if (!cell.IsCollapsed)
-                {
-                    return false;
-                }
+                return false;
             }
         }
         return true;

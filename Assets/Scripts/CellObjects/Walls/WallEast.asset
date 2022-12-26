@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: WallEast
   m_EditorClassIdentifier: 
   CellPrefab: {fileID: 1366528120857268523, guid: 3b0cca3dd27b35041b51610b4f5dd63a, type: 3}
-  Weight: 0.1
+  Weight: 0.79
   AllowedNeighbourCell:
   - Direction: 0
     HasWall: 1

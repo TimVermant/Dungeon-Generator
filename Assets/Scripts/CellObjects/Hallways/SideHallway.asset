@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SideHallway
   m_EditorClassIdentifier: 
   CellPrefab: {fileID: 8811818625674517288, guid: 67a52c72373cc904da8361f36d195dd5, type: 3}
-  Weight: 0.149
+  Weight: 0.049
   AllowedNeighbourCell:
   - Direction: 0
     HasWall: 1

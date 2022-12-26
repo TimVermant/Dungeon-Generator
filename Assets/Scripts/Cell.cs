@@ -11,17 +11,18 @@ public class Cell
     public bool IsOutsideEdge { get; private set; }
     public int Row { get; private set; }
     public int Column { get; private set; }
+    public int Level { get; private set; }
 
     private GameObject _spawnedCell = null;
 
 
 
     // Called when initializing the grid layout 
-    public void InitializeCell(int row, int col)
+    public void InitializeCell(int row, int col, int height)
     {
         Row = row;
         Column = col;
-
+        Level = height;
     }
 
     public void CollapseEdgeCell()
