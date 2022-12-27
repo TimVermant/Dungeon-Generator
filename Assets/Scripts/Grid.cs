@@ -8,7 +8,7 @@ namespace DungeonGenerator
 
     public class Grid : MonoBehaviour
     {
-        public List<Cell> Cells { get; private set; } = new List<Cell> ();
+        public List<Cell> Cells { get; private set; } = new List<Cell>();
         [SerializeField] private List<CellObject> _potentialCells = new List<CellObject>();
         private List<CellDirection> _possibleDirections = new() { CellDirection.Right, CellDirection.Left, CellDirection.Front, CellDirection.Back };
         private int _rowSize;
@@ -16,15 +16,18 @@ namespace DungeonGenerator
         private int _dimensionsSize;
         private float _gridSize = 2.0f; // The size of the prefab pieces 
 
+ 
+
         public void SetupGrid(int rowSize, int colSize, int dimensionsSize)
         {
 
             _rowSize = rowSize;
             _columnSize = colSize;
             _dimensionsSize = dimensionsSize;
+     
 
             Cells = new List<Cell>(new Cell[rowSize * colSize * dimensionsSize]);
-            
+
             for (int height = 0; height < _dimensionsSize; height++)
             {
                 SetupLevel(height);
@@ -35,10 +38,11 @@ namespace DungeonGenerator
         {
 
             int index = 0;
+
             // Loops and initializes the grid 
-            for (int row = 0; row < _rowSize; row++)
+            for (int col = 0; col < _columnSize; col++)
             {
-                for (int col = 0; col < _columnSize; col++)
+                for (int row = 0; row < _rowSize; row++)
                 {
                     Cell cell = new();
                     cell.InitializeCell(row, col, level);
@@ -46,9 +50,11 @@ namespace DungeonGenerator
                     {
                         cell.CollapseEdgeCell();
                     }
-                   // Cells.Add(cell);
-                   index = CoordinateToIndex(row, col, level);  
+                    // Cells.Add(cell);
+                    index = CoordinateToIndex(row, col, level);
+           
                     Cells[index] = cell;
+
                 }
             }
         }
@@ -84,6 +90,8 @@ namespace DungeonGenerator
             List<Cell> lowestCells = new();
             foreach (Cell cell in Cells)
             {
+                if (cell == null)
+                    continue;
 
                 int newEntropy = GetEntropy(cell);
                 if (newEntropy <= 0)
@@ -117,15 +125,12 @@ namespace DungeonGenerator
 
 
         // Private
-        private List<Cell> GetNeighbours2D(Cell cell, int level = 0)
+        private List<Cell> GetNeighbours2D(Cell cell)
         {
             List<Cell> neighbours = new List<Cell>();
-            if(!IsValidLevel(level))
-            {
-                return neighbours;
-            }
             int row = cell.Row;
             int column = cell.Column;
+            int level = cell.Level;
             neighbours.Add(GetCell(row + 1, column, level)); // Right
             neighbours.Add(GetCell(row, column + 1, level)); // Front
             neighbours.Add(GetCell(row - 1, column, level)); // Left
@@ -136,17 +141,26 @@ namespace DungeonGenerator
 
         private List<Cell> GetNeighbours3D(Cell cell)
         {
+
             List<Cell> neigbhours = new List<Cell>();
-            neigbhours.AddRange(GetNeighbours2D(cell, cell.Level + 1));
-            neigbhours.AddRange(GetNeighbours2D(cell, cell.Level));
-            neigbhours.AddRange(GetNeighbours2D(cell, cell.Level + -1));
+            int row = cell.Row;
+            int column = cell.Column;
+            int level = cell.Level;
+            neigbhours.AddRange(GetNeighbours2D(cell));
+
+            if (IsValidLevel(level + 1))
+                neigbhours.AddRange(GetNeighbours2D(GetCell(row, column, level + 1))); ;
+            if (IsValidLevel(level - 1))
+                neigbhours.AddRange(GetNeighbours2D(GetCell(row, column, level - 1)));
             return neigbhours;
         }
 
         // Filters out and adds all the unique collapsed cells
         private List<Cell> GetCollapsedNeighbours(Cell cell)
         {
-            List<Cell> neighbours = GetNeighbours2D(cell);
+            if (cell == null)
+                Debug.Log("Cell is null");
+            List<Cell> neighbours = GetNeighbours3D(cell);
             List<Cell> uniqueList = new();
             foreach (Cell cellItem in neighbours)
             {
@@ -290,7 +304,7 @@ namespace DungeonGenerator
 
         private Cell GetRandomCell()
         {
-            return GetCell(Random.Range(0, _rowSize),Random.Range(0, _columnSize),Random.Range(0, _dimensionsSize));
+            return GetCell(Random.Range(0, _rowSize), Random.Range(0, _columnSize), Random.Range(0, _dimensionsSize));
         }
 
 
@@ -307,19 +321,19 @@ namespace DungeonGenerator
             if (!IsValidIndex(row, col, level))
             {
                 Cell cell = new();
-                cell.InitializeCell(row, col,level);
+                cell.InitializeCell(row, col, level);
                 cell.CollapseEdgeCell();
                 return cell;
             }
-            
-            return Cells[CoordinateToIndex(row,col,level)];
+
+            return Cells[CoordinateToIndex(row, col, level)];
         }
 
 
 
         private bool IsValidIndex(int row, int col, int level)
         {
-            return row >= 0 && col >= 0 && level >= 0 && 
+            return row >= 0 && col >= 0 && level >= 0 &&
                 row < _rowSize && col < _columnSize && level < _dimensionsSize;
         }
 
@@ -413,13 +427,13 @@ namespace DungeonGenerator
             return weightSum;
         }
 
-   
-        private int CoordinateToIndex(int row, int column,int level)
+
+        private int CoordinateToIndex(int row, int column, int level)
         {
             if (!IsValidIndex(row, column, level))
                 return -1;
-            return row + (column * _columnSize) + (level * _dimensionsSize);
-        }            
-        
+            return row + (column * _rowSize) + (level * _rowSize * _columnSize);
+        }
+
     }
 }
