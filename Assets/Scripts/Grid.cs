@@ -16,7 +16,7 @@ namespace DungeonGenerator
         private int _dimensionsSize;
         private float _gridSize = 2.0f; // The size of the prefab pieces 
 
- 
+
 
         public void SetupGrid(int rowSize, int colSize, int dimensionsSize)
         {
@@ -24,7 +24,7 @@ namespace DungeonGenerator
             _rowSize = rowSize;
             _columnSize = colSize;
             _dimensionsSize = dimensionsSize;
-     
+
 
             Cells = new List<Cell>(new Cell[rowSize * colSize * dimensionsSize]);
 
@@ -52,7 +52,7 @@ namespace DungeonGenerator
                     }
                     // Cells.Add(cell);
                     index = CoordinateToIndex(row, col, level);
-           
+
                     Cells[index] = cell;
 
                 }
@@ -72,11 +72,11 @@ namespace DungeonGenerator
         public void SpawnCell(Cell cell, Transform parent)
         {
             float startPosX = -_rowSize * 0.5f * _gridSize;
-            float startPosY = -_columnSize * 0.5f * _gridSize;
+            float startPosZ = -_columnSize * 0.5f * _gridSize;
             Vector3 cellPosition = new Vector3(
                 startPosX + cell.Row * _gridSize,
-                0,
-                startPosY + cell.Column * _gridSize);
+                cell.Level * _gridSize,
+                startPosZ + cell.Column * _gridSize);
             cell.InstantiateCell(cellPosition, parent);
         }
 

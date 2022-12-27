@@ -18,12 +18,28 @@ public class Generator : MonoBehaviour
     private int _iterationCounter = 0;
 
 
+    public bool IsCollapsed
+    {
+        get
+        {
+            foreach (Cell cell in _grid.Cells)
+            {
+                if (!cell.IsCollapsed)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    }
+
     public void CollapseGrid()
     {
         ClearGrid();
         _iterationCounter = 0;
         _grid.SetupGrid(_rows, _columns, _levels);
-        while (_iterationCounter < _rows * _columns)
+        while (!IsCollapsed)
         {
             if (!_loopTillEnd && _iterationCounter >= _maxIterations)
             {
@@ -59,15 +75,4 @@ public class Generator : MonoBehaviour
 
 
 
-    private bool IsCollapsed()
-    {
-        foreach (Cell cell in _grid.Cells)
-        {
-            if (!cell.IsCollapsed)
-            {
-                return false;
-            }
-        }
-        return true;
-    }
 }
