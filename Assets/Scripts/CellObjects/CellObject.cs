@@ -48,5 +48,6 @@ public enum CellDirection
     Left = 1,
     Front = 2,
     Back = 3,
-
+    Above = 4,
+    Below = 5,
 }

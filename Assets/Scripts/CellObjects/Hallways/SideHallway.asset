@@ -23,3 +23,7 @@ MonoBehaviour:
     HasWall: 0
   - Direction: 3
     HasWall: 0
+  - Direction: 4
+    HasWall: 0
+  - Direction: 5
+    HasWall: 1

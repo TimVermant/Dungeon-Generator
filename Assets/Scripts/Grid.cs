@@ -50,7 +50,7 @@ namespace DungeonGenerator
                     {
                         cell.CollapseEdgeCell();
                     }
-                    // Cells.Add(cell);
+             
                     index = CoordinateToIndex(row, col, level);
 
                     Cells[index] = cell;
@@ -114,6 +114,7 @@ namespace DungeonGenerator
 
 
             }
+            Debug.Log(entropy);
 
             if (lowestCells.Count > 0)
             {
@@ -160,7 +161,7 @@ namespace DungeonGenerator
         {
             if (cell == null)
                 Debug.Log("Cell is null");
-            List<Cell> neighbours = GetNeighbours3D(cell);
+            List<Cell> neighbours = GetNeighbours2D(cell);
             List<Cell> uniqueList = new();
             foreach (Cell cellItem in neighbours)
             {
@@ -221,6 +222,10 @@ namespace DungeonGenerator
                 // Find out the direction from the neighbour to the mainCell
                 CellDirection direction = GetDirection(cellItem, mainCell);
                 CellDirection oppositeDirection = GetDirection(mainCell, cellItem);
+
+                // For now ignore the neighbour check on tiles above/below
+                if (direction == CellDirection.Above || direction == CellDirection.Below)
+                    continue;
                 bool hasWall = false;
                 if (cellItem.IsOutsideEdge)
                 {
@@ -257,6 +262,7 @@ namespace DungeonGenerator
                 // Find out the direction from the neighbour to the mainCell
                 CellDirection neighbourToMain = GetDirection(cellItem, mainCell);
                 CellDirection mainToNeighbour = GetDirection(mainCell, cellItem);
+                
                 bool hasWall = false;
                 if (cellItem.IsOutsideEdge)
                 {
@@ -347,6 +353,7 @@ namespace DungeonGenerator
         {
             int rowDif = from.Row - to.Row;
             int colDif = from.Column - to.Column;
+            int levelDif = from.Level - to.Level;
             if (colDif == -1)
             {
                 return CellDirection.Front;
@@ -362,6 +369,14 @@ namespace DungeonGenerator
             else if (rowDif == 1)
             {
                 return CellDirection.Left;
+            }
+            else if (levelDif == 1)
+            {
+                return CellDirection.Below;
+            }
+            else if(levelDif == -1)
+            {
+                return CellDirection.Above;
             }
 
             return CellDirection.Left;
