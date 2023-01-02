@@ -10,6 +10,7 @@ public class Generator : MonoBehaviour
     [SerializeField] private int _rows;
     [SerializeField] private int _columns;
     [SerializeField] private int _levels;
+    [SerializeField] private int _connectionAmountInbetweenLevels;
     [SerializeField] private Transform _gridParent;
 
     [Header("Algorithm variables")]
