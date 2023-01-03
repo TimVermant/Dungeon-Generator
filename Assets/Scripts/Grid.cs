@@ -114,7 +114,7 @@ namespace DungeonGenerator
 
 
             }
-            Debug.Log(entropy);
+           
 
             if (lowestCells.Count > 0)
             {
@@ -223,9 +223,11 @@ namespace DungeonGenerator
                 CellDirection direction = GetDirection(cellItem, mainCell);
                 CellDirection oppositeDirection = GetDirection(mainCell, cellItem);
 
-                // For now ignore the neighbour check on tiles above/below
+                //// For now ignore the neighbour check on tiles above/below
                 if (direction == CellDirection.Above || direction == CellDirection.Below)
-                    continue;
+                {
+                    Debug.Log("Above or below");
+                }
                 bool hasWall = false;
                 if (cellItem.IsOutsideEdge)
                 {

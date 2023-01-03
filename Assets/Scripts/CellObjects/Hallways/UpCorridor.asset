@@ -13,17 +13,18 @@ MonoBehaviour:
   m_Name: UpCorridor
   m_EditorClassIdentifier: 
   CellPrefab: {fileID: 6999034011361508550, guid: c7763ced3a8b27446aa9f2e28bfc3a90, type: 3}
+  Rotation: 0
   Weight: 0.8
   AllowedNeighbourCell:
   - Direction: 0
-    HasWall: 0
+    HasObstruction: 0
   - Direction: 1
-    HasWall: 0
+    HasObstruction: 0
   - Direction: 2
-    HasWall: 1
+    HasObstruction: 1
   - Direction: 3
-    HasWall: 1
+    HasObstruction: 1
   - Direction: 4
-    HasWall: 0
+    HasObstruction: 1
   - Direction: 5
-    HasWall: 1
+    HasObstruction: 1

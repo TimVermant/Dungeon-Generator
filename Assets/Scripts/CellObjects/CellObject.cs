@@ -8,11 +8,11 @@ using UnityEngine;
 public class CellObject : ScriptableObject
 {
     public GameObject CellPrefab;
+    public float Rotation = 0;
     [Range(0f, 1f)]
     public float Weight = 1f;
     
-
-    public List<CellObjectNeighbbourDirection> AllowedNeighbourCell;
+    public List<CellObjectNeighbbourDirection> AllowedNeighbourCell = new List<CellObjectNeighbbourDirection>(new CellObjectNeighbbourDirection[(int)CellDirection.DirectionCount]);
     [HideInInspector]
     public CellObjectNeighbbourDirection GetAllowedNeighbourInDirection(CellDirection direction)
     {
@@ -29,7 +29,7 @@ public class CellObject : ScriptableObject
     public bool HasWall(CellDirection direction)
     {
         CellObjectNeighbbourDirection cellObjectNeighbourDirection = GetAllowedNeighbourInDirection(direction);
-        return cellObjectNeighbourDirection.HasWall;
+        return cellObjectNeighbourDirection.HasObstruction;
     }
 }
 
@@ -37,7 +37,7 @@ public class CellObject : ScriptableObject
 public class CellObjectNeighbbourDirection
 {
     public CellDirection Direction;
-    public bool HasWall;
+    public bool HasObstruction;
 }
 
 
@@ -50,4 +50,5 @@ public enum CellDirection
     Back = 3,
     Above = 4,
     Below = 5,
+    DirectionCount = 6,
 }

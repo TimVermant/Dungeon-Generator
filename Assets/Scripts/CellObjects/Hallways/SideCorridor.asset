@@ -12,18 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02affba88803e0e429b66050bf2fb9a2, type: 3}
   m_Name: SideCorridor
   m_EditorClassIdentifier: 
-  CellPrefab: {fileID: 8811818625674517288, guid: ca472037bd13c7e4385115828385cc1d, type: 3}
+  CellPrefab: {fileID: 6999034011361508550, guid: c7763ced3a8b27446aa9f2e28bfc3a90, type: 3}
+  Rotation: 90
   Weight: 0.8
   AllowedNeighbourCell:
   - Direction: 0
-    HasWall: 1
+    HasObstruction: 1
   - Direction: 1
-    HasWall: 1
+    HasObstruction: 1
   - Direction: 2
-    HasWall: 0
+    HasObstruction: 0
   - Direction: 3
-    HasWall: 0
+    HasObstruction: 0
   - Direction: 4
-    HasWall: 0
+    HasObstruction: 1
   - Direction: 5
-    HasWall: 1
+    HasObstruction: 1

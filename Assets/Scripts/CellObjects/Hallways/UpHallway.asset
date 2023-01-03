@@ -13,17 +13,18 @@ MonoBehaviour:
   m_Name: UpHallway
   m_EditorClassIdentifier: 
   CellPrefab: {fileID: 6999034011361508550, guid: b1ffa3165f092cc4985d363f695a592f, type: 3}
+  Rotation: 0
   Weight: 0.284
   AllowedNeighbourCell:
   - Direction: 0
-    HasWall: 0
+    HasObstruction: 0
   - Direction: 1
-    HasWall: 0
+    HasObstruction: 0
   - Direction: 2
-    HasWall: 1
+    HasObstruction: 1
   - Direction: 3
-    HasWall: 1
+    HasObstruction: 1
   - Direction: 4
-    HasWall: 0
+    HasObstruction: 1
   - Direction: 5
-    HasWall: 1
+    HasObstruction: 1

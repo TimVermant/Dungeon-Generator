@@ -45,7 +45,8 @@ public class Cell
             GameObject.DestroyImmediate(_spawnedCell);
 
         }
-        _spawnedCell = GameObject.Instantiate(CurrentCellObject.CellPrefab, pos, CurrentCellObject.CellPrefab.transform.rotation, parent);
+        _spawnedCell = GameObject.Instantiate(CurrentCellObject.CellPrefab, pos, Quaternion.Euler(0, CurrentCellObject.Rotation,0), parent);
+        _spawnedCell.name = CurrentCellObject.name;
 
     }
 

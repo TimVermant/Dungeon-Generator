@@ -12,18 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02affba88803e0e429b66050bf2fb9a2, type: 3}
   m_Name: WallNorth
   m_EditorClassIdentifier: 
-  CellPrefab: {fileID: 8124586733967653419, guid: 43129ed9c88e0ed4691a03679967c7ed, type: 3}
+  CellPrefab: {fileID: 1366528120857268523, guid: 29a7fb77f82c756499c2fe41e00540c7, type: 3}
+  Rotation: 90
   Weight: 0.639
   AllowedNeighbourCell:
   - Direction: 0
-    HasWall: 0
+    HasObstruction: 0
   - Direction: 1
-    HasWall: 0
+    HasObstruction: 0
   - Direction: 2
-    HasWall: 1
+    HasObstruction: 1
   - Direction: 3
-    HasWall: 0
+    HasObstruction: 0
   - Direction: 4
-    HasWall: 0
+    HasObstruction: 1
   - Direction: 5
-    HasWall: 1
+    HasObstruction: 1

@@ -13,17 +13,18 @@ MonoBehaviour:
   m_Name: WallWest
   m_EditorClassIdentifier: 
   CellPrefab: {fileID: 1366528120857268523, guid: 29a7fb77f82c756499c2fe41e00540c7, type: 3}
+  Rotation: 0
   Weight: 0.81
   AllowedNeighbourCell:
   - Direction: 0
-    HasWall: 0
+    HasObstruction: 0
   - Direction: 1
-    HasWall: 1
+    HasObstruction: 1
   - Direction: 2
-    HasWall: 0
+    HasObstruction: 0
   - Direction: 3
-    HasWall: 0
+    HasObstruction: 0
   - Direction: 4
-    HasWall: 0
+    HasObstruction: 1
   - Direction: 5
-    HasWall: 1
+    HasObstruction: 1

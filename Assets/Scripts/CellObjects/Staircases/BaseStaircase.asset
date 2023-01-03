@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 02affba88803e0e429b66050bf2fb9a2, type: 3}
-  m_Name: CornerSE
+  m_Name: BaseStaircase
   m_EditorClassIdentifier: 
-  CellPrefab: {fileID: 2382756234909974646, guid: c4a069fa7f02f6d4e89aec2b43ba4740, type: 3}
-  Rotation: 270
-  Weight: 0.124
+  CellPrefab: {fileID: 8093053620585043385, guid: ed8f294dcb45f0840b40b90e6d28e424, type: 3}
+  Rotation: 0
+  Weight: 0
   AllowedNeighbourCell:
   - Direction: 0
     HasObstruction: 1
   - Direction: 1
-    HasObstruction: 0
+    HasObstruction: 1
   - Direction: 2
-    HasObstruction: 0
+    HasObstruction: 1
   - Direction: 3
     HasObstruction: 1
   - Direction: 4
