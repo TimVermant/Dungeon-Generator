@@ -158,11 +158,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5203665770110138721, guid: 43129ed9c88e0ed4691a03679967c7ed, type: 3}
       propertyPath: m_LocalScale.z
-      value: 2
+      value: 1.99
       objectReference: {fileID: 0}
     - target: {fileID: 8124586733967653419, guid: 43129ed9c88e0ed4691a03679967c7ed, type: 3}
       propertyPath: m_Name
-      value: HallwayUp
+      value: Hallway
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 43129ed9c88e0ed4691a03679967c7ed, type: 3}

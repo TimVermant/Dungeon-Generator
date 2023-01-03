@@ -40,6 +40,12 @@ public class Generator : MonoBehaviour
         ClearGrid();
         _iterationCounter = 0;
         _grid.SetupGrid(_rows, _columns, _levels);
+        string name = "Level ";
+        for(int i =0; i < _levels;i++)
+        {
+            GameObject levelObj = new GameObject(name + i);
+            levelObj.transform.parent = _gridParent;
+        }
         while (!IsCollapsed)
         {
             if (!_loopTillEnd && _iterationCounter >= _maxIterations)

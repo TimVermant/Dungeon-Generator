@@ -50,7 +50,7 @@ namespace DungeonGenerator
                     {
                         cell.CollapseEdgeCell();
                     }
-             
+
                     index = CoordinateToIndex(row, col, level);
 
                     Cells[index] = cell;
@@ -73,11 +73,12 @@ namespace DungeonGenerator
         {
             float startPosX = -_rowSize * 0.5f * _gridSize;
             float startPosZ = -_columnSize * 0.5f * _gridSize;
+
             Vector3 cellPosition = new Vector3(
                 startPosX + cell.Row * _gridSize,
-                cell.Level * _gridSize,
+                cell.Level * 0.5f * _gridSize + (cell.Level * 0.1f),
                 startPosZ + cell.Column * _gridSize);
-            cell.InstantiateCell(cellPosition, parent);
+            cell.InstantiateCell(cellPosition, parent.GetChild(cell.Level));
         }
 
 
@@ -114,7 +115,7 @@ namespace DungeonGenerator
 
 
             }
-           
+
 
             if (lowestCells.Count > 0)
             {
@@ -149,10 +150,9 @@ namespace DungeonGenerator
             int level = cell.Level;
             neigbhours.AddRange(GetNeighbours2D(cell));
 
-            if (IsValidLevel(level + 1))
-                neigbhours.AddRange(GetNeighbours2D(GetCell(row, column, level + 1))); ;
-            if (IsValidLevel(level - 1))
-                neigbhours.AddRange(GetNeighbours2D(GetCell(row, column, level - 1)));
+
+            neigbhours.Add(GetCell(row, column, level + 1)); ;
+            neigbhours.Add(GetCell(row, column, level - 1));
             return neigbhours;
         }
 
@@ -161,7 +161,7 @@ namespace DungeonGenerator
         {
             if (cell == null)
                 Debug.Log("Cell is null");
-            List<Cell> neighbours = GetNeighbours2D(cell);
+            List<Cell> neighbours = GetNeighbours3D(cell);
             List<Cell> uniqueList = new();
             foreach (Cell cellItem in neighbours)
             {
@@ -223,16 +223,10 @@ namespace DungeonGenerator
                 CellDirection direction = GetDirection(cellItem, mainCell);
                 CellDirection oppositeDirection = GetDirection(mainCell, cellItem);
 
-                //// For now ignore the neighbour check on tiles above/below
-                if (direction == CellDirection.Above || direction == CellDirection.Below)
-                {
-                    Debug.Log("Above or below");
-                }
                 bool hasWall = false;
                 if (cellItem.IsOutsideEdge)
                 {
                     hasWall = true;
-
                 }
                 else
                 {
@@ -264,7 +258,7 @@ namespace DungeonGenerator
                 // Find out the direction from the neighbour to the mainCell
                 CellDirection neighbourToMain = GetDirection(cellItem, mainCell);
                 CellDirection mainToNeighbour = GetDirection(mainCell, cellItem);
-                
+
                 bool hasWall = false;
                 if (cellItem.IsOutsideEdge)
                 {
@@ -376,7 +370,7 @@ namespace DungeonGenerator
             {
                 return CellDirection.Below;
             }
-            else if(levelDif == -1)
+            else if (levelDif == -1)
             {
                 return CellDirection.Above;
             }
