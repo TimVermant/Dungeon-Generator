@@ -26,7 +26,7 @@ public class CellObject : ScriptableObject
         return null;
     }
   
-    public bool HasWall(CellDirection direction)
+    public bool HasObstruction(CellDirection direction)
     {
         CellObjectNeighbbourDirection cellObjectNeighbourDirection = GetAllowedNeighbourInDirection(direction);
         return cellObjectNeighbourDirection.HasObstruction;

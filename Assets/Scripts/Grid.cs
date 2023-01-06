@@ -10,14 +10,22 @@ namespace DungeonGenerator
     {
         public List<Cell> Cells { get; private set; } = new List<Cell>();
         [SerializeField] private List<CellObject> _potentialCells = new List<CellObject>();
-        private List<CellDirection> _possibleDirections = new() { CellDirection.Right, CellDirection.Left, CellDirection.Front, CellDirection.Back };
         private int _rowSize;
         private int _columnSize;
         private int _dimensionsSize;
         private float _gridSize = 2.0f; // The size of the prefab pieces 
 
+        // -----------------------------------
+        // -- INITIALIZING THE GRID LAYOUT -- 
+        // -----------------------------------
+        #region Grid Initialization
 
-
+        /// <summary>
+        /// Setting up the layout of the 3D grid
+        /// </summary>
+        /// <param name="rowSize">The amount of rows</param>
+        /// <param name="colSize">The amount of columns</param>
+        /// <param name="dimensionsSize">The amount of levels</param>
         public void SetupGrid(int rowSize, int colSize, int dimensionsSize)
         {
 
@@ -46,31 +54,39 @@ namespace DungeonGenerator
                 {
                     Cell cell = new();
                     cell.InitializeCell(row, col, level);
-                    if (!IsValidIndex(row, col, level))
+                    if (!IsOutOfBounds(row, col, level))
                     {
                         cell.CollapseEdgeCell();
                     }
 
-                    index = CoordinateToIndex(row, col, level);
+                    index = GetIndexFromCoordinate(row, col, level);
 
                     Cells[index] = cell;
 
                 }
             }
+
         }
 
+#endregion
 
+        // ----------------------------------------------------
+        // -- FINDING AND COLLAPSING THE LOWEST ENTROPY CELL -- 
+        // ----------------------------------------------------
+        #region Cell Collapsing
 
-        // Base function that calculates the cell value based on its entropy
+        /// <summary>
+        /// Function that calculates and collapses the given cell 
+        /// Gets called from outside by the Generator.cs
+        /// </summary>
+        /// <param name="cell">Cell to collapse</param>
+        /// <param name="parent">Transform to parent to the spawned object</param>
         public void CollapseCell(Cell cell, Transform parent)
         {
             CellObject value = CalculateCellValue(cell);
             cell.Collapse(value);
-            SpawnCell(cell, parent);
-        }
 
-        public void SpawnCell(Cell cell, Transform parent)
-        {
+            // Spawn in cell
             float startPosX = -_rowSize * 0.5f * _gridSize;
             float startPosZ = -_columnSize * 0.5f * _gridSize;
 
@@ -81,10 +97,11 @@ namespace DungeonGenerator
             cell.InstantiateCell(cellPosition, parent.GetChild(cell.Level));
         }
 
-
-        // GETTERS
-        // Public
-        public Cell GetLowestEntropyCell(bool canBeCollapsed = false)
+        /// <summary>
+        /// Loops over and gets the lowest entropy cell
+        /// </summary>
+        /// <returns>Returns the cell with the lowest entropy</returns>
+        public Cell GetLowestEntropyCell()
         {
             Cell lowestCell = GetRandomUncollapsedCell();
             int entropy = _potentialCells.Count + 1;
@@ -94,12 +111,13 @@ namespace DungeonGenerator
                 if (cell == null)
                     continue;
 
-                int newEntropy = GetEntropy(cell);
+                int newEntropy = CalculateEntropy(cell);
                 if (newEntropy <= 0)
                 {
                     continue;
                 }
-                if (canBeCollapsed == cell.IsCollapsed)
+
+                if (!cell.IsCollapsed)
                 {
                     if (newEntropy < entropy)
                     {
@@ -125,8 +143,174 @@ namespace DungeonGenerator
             return lowestCell;
         }
 
+#endregion
 
-        // Private
+        // ----------------------
+        // -- WFC CALCULATIONS -- 
+        // ----------------------
+        #region WFC Calculations
+        /// <summary>
+        /// Calculates the entropy of the given cell
+        /// </summary>
+        /// <param name="cell">The given cell from which we need to know the entropy</param>
+        /// <returns>The calculated entropy</returns>
+        private int CalculateEntropy(Cell cell)
+        {
+            List<Cell> neighbours = GetCollapsedNeighbours(cell);
+            List<CellObject> cellOptions = CalculatePossibleVariations(cell, neighbours);
+            return cellOptions.Count;
+        }
+
+        /// <summary>
+        /// Calculates the value of the given cell based on its entropy
+        /// </summary>
+        /// <param name="cell">The given cell from which we need to know the value</param>
+        /// <returns>The calculated value</returns>
+        private CellObject CalculateCellValue(Cell cell)
+        {
+
+            List<CellObject> potentialValues = CalculatePossibleVariations(cell, GetCollapsedNeighbours(cell));
+
+            CellObject cellValue = null;
+
+            // Randomize if no neighbours
+            if (potentialValues.Count == 0)
+            {
+                cellValue = CalculateWeightedValue(_potentialCells);
+            }
+            else
+            {
+                cellValue = CalculateWeightedValue(potentialValues);
+            }
+            return cellValue;
+        }
+
+        /// <summary>
+        /// Calculates the possible variations on an uncollapsed cell based on the previously calculated collapsedNeighbours
+        /// </summary>
+        /// <param name="mainCell">Cell for which we need to calculate the possible variations</param>
+        /// <param name="collapsedNeighbours">Collapsed neighbours to the mainCell</param>
+        /// <returns></returns>
+        private List<CellObject> CalculatePossibleVariations(Cell mainCell, List<Cell> collapsedNeighbours)
+        {
+            List<CellObject> cellOptions = new(_potentialCells);
+            List<CellObject> finalOptions = new();
+            foreach (Cell cellItem in collapsedNeighbours)
+            {
+
+                // Find out the direction from the neighbour to the mainCell and back
+                CellDirection neighbourToMain = GetDirection(cellItem, mainCell);
+                CellDirection mainToNeighbour = GetDirection(mainCell, cellItem);
+
+                bool hasWall = true;
+                if (!cellItem.IsOutsideEdge)
+                {
+                    hasWall = cellItem.CurrentCellObject.HasObstruction(neighbourToMain);
+                }
+
+                RemoveInvalidOptions(mainCell, cellItem, mainToNeighbour, cellOptions, hasWall);
+
+            }
+
+            // Removes duplicates
+            foreach (CellObject potentialCell in cellOptions)
+            {
+                if (!finalOptions.Contains(potentialCell))
+                {
+                    finalOptions.Add(potentialCell);
+                }
+            }
+
+            return finalOptions;
+        }
+
+        /// <summary>
+        /// Helper that removes all the invalid options from the list of options
+        /// </summary>
+        /// <param name="mainCell"></param>
+        /// <param name="cellItem"></param>
+        /// <param name="mainToNeighbour"></param>
+        /// <param name="cellOptions"></param>
+        /// <param name="hasWall"></param>
+        private void RemoveInvalidOptions(Cell mainCell, Cell cellItem, CellDirection mainToNeighbour, List<CellObject> cellOptions, bool hasWall)
+        {
+            // Add option if it has a wall in that direction
+            foreach (CellObject potentialCell in _potentialCells)
+            {
+                // Extra logic when encountering staircases
+                if (!potentialCell.HasObstruction(CellDirection.Above))
+                {
+                    if (mainToNeighbour == CellDirection.Above && !CanPlaceStaircase(mainCell, cellItem, potentialCell))
+                    {
+                        cellOptions.Remove(potentialCell);
+                    }
+                }
+
+                // Default checks
+                if (potentialCell.HasObstruction(mainToNeighbour) != hasWall)
+                {
+                    cellOptions.Remove(potentialCell);
+                }
+
+            }
+        }
+
+        /// <summary>
+        /// Randomly calculates the new value taking weight into account
+        /// </summary>
+        /// <param name="potentialOptions"></param>
+        /// <returns></returns>
+        private CellObject CalculateWeightedValue(List<CellObject> potentialOptions)
+        {
+            if (potentialOptions.Count == 1)
+            {
+                return potentialOptions[0];
+            }
+            List<CellObject> shuffledList = GetShuffledObjects(potentialOptions);
+            float weightSum = 0.0f;
+            weightSum = CalculateWeightSum(shuffledList);
+            float randomNumber = Random.Range(0, weightSum);
+            foreach (CellObject cellObject in shuffledList)
+            {
+                // To account for floating point errors
+                if (Mathf.Abs(weightSum - cellObject.Weight) <= 0.0001f)
+                {
+                    return cellObject;
+                }
+                weightSum -= cellObject.Weight;
+
+            }
+            Debug.LogError("No valid weighted value found: " + weightSum);
+
+            return null;
+
+        }
+
+        /// <summary>
+        /// Calculates the sum of all the weights
+        /// </summary>
+        /// <param name="potentialOptions"></param>
+        /// <returns></returns>
+        private float CalculateWeightSum(List<CellObject> potentialOptions)
+        {
+            float weightSum = 0.0f;
+            foreach (CellObject option in potentialOptions)
+            {
+                weightSum += option.Weight;
+            }
+            return weightSum;
+        }
+#endregion
+
+        // ---------------------
+        // -- HELPER GETTERS -- 
+        // ---------------------
+        #region Helper Getters
+        /// <summary>
+        /// Get the neighbours inside of a 2D space
+        /// </summary>
+        /// <param name="cell">Cell from which the neighbours need to be calculated</param>
+        /// <returns>Neighbours of the given cell</returns>
         private List<Cell> GetNeighbours2D(Cell cell)
         {
             List<Cell> neighbours = new List<Cell>();
@@ -141,6 +325,12 @@ namespace DungeonGenerator
             return neighbours;
         }
 
+
+        /// <summary>
+        /// Get the neighbours inside of a 3D space
+        /// </summary>
+        /// <param name="cell">Cell from which the neighbours need to be calculated</param>
+        /// <returns>Neighbours of the given cell</returns>
         private List<Cell> GetNeighbours3D(Cell cell)
         {
 
@@ -151,12 +341,17 @@ namespace DungeonGenerator
             neigbhours.AddRange(GetNeighbours2D(cell));
 
 
-            neigbhours.Add(GetCell(row, column, level + 1)); ;
+            neigbhours.Add(GetCell(row, column, level + 1));
             neigbhours.Add(GetCell(row, column, level - 1));
             return neigbhours;
         }
 
-        // Filters out and adds all the unique collapsed cells
+        /// <summary>
+        /// Get all collapsed neighbours from the given cell
+        /// Out of bounds cells also count as a form of collapsed cells 
+        /// </summary>
+        /// <param name="cell">Cell from which the neighbours need to be calculated</param>
+        /// <returns>All the collapsed neighbours</returns>
         private List<Cell> GetCollapsedNeighbours(Cell cell)
         {
             if (cell == null)
@@ -183,117 +378,9 @@ namespace DungeonGenerator
             return uniqueList;
         }
 
-
-
-        private int GetEntropy(Cell cell)
-        {
-            List<Cell> neighbours = GetCollapsedNeighbours(cell);
-            List<CellObject> cellOptions = GetAllPossibleVariations(cell, neighbours);
-            return cellOptions.Count;
-        }
-
-        private CellObject CalculateCellValue(Cell cell)
-        {
-
-            List<CellObject> potentialValues = GetAllPossibleVariations(cell, GetCollapsedNeighbours(cell));
-
-            CellObject cellValue = null;
-
-            // Randomize if no neighbours
-            if (potentialValues.Count == 0)
-            {
-                cellValue = GetWeightedValue(_potentialCells);
-            }
-            else
-            {
-                cellValue = GetWeightedValue(potentialValues);
-            }
-            return cellValue;
-        }
-
-        // Finds the overlap of all the unique neighbours and calculates all the options
-        private List<CellObject> GetAllPossibleVariations(Cell mainCell, List<Cell> uniqueNeighbours)
-        {
-
-            List<CellObject> cellOptions = new List<CellObject>();
-            foreach (Cell cellItem in uniqueNeighbours)
-            {
-
-                // Find out the direction from the neighbour to the mainCell
-                CellDirection direction = GetDirection(cellItem, mainCell);
-                CellDirection oppositeDirection = GetDirection(mainCell, cellItem);
-
-                bool hasWall = false;
-                if (cellItem.IsOutsideEdge)
-                {
-                    hasWall = true;
-                }
-                else
-                {
-                    hasWall = cellItem.CurrentCellObject.HasWall(direction);
-                }
-                // Add option if it has a wall in that direction
-                foreach (CellObject potentialCell in _potentialCells)
-                {
-                    if (potentialCell.HasWall(oppositeDirection) == hasWall)
-                    {
-                        cellOptions.Add(potentialCell);
-                    }
-                }
-            }
-
-            cellOptions = GetOnlyPossibleVariations(mainCell, uniqueNeighbours, cellOptions);
-
-            return cellOptions;
-        }
-
-        private List<CellObject> GetOnlyPossibleVariations(Cell mainCell, List<Cell> uniqueNeighbours, List<CellObject> options)
-        {
-            List<CellObject> cellOptions = new(options);
-            List<CellObject> duplicates = new();
-            List<CellObject> finalList = new();
-            foreach (Cell cellItem in uniqueNeighbours)
-            {
-
-                // Find out the direction from the neighbour to the mainCell
-                CellDirection neighbourToMain = GetDirection(cellItem, mainCell);
-                CellDirection mainToNeighbour = GetDirection(mainCell, cellItem);
-
-                bool hasWall = false;
-                if (cellItem.IsOutsideEdge)
-                {
-                    hasWall = true;
-
-                }
-                else
-                {
-                    hasWall = cellItem.CurrentCellObject.HasWall(neighbourToMain);
-                }
-                // Add option if it has a wall in that direction
-                foreach (CellObject potentialCell in options)
-                {
-
-                    if (potentialCell.HasWall(mainToNeighbour) != hasWall)
-                    {
-                        cellOptions.Remove(potentialCell);
-                    }
-
-
-
-                }
-
-            }
-            foreach (CellObject potentialCell in cellOptions)
-            {
-                if (!finalList.Contains(potentialCell))
-                {
-                    finalList.Add(potentialCell);
-                }
-            }
-
-            return finalList;
-        }
-
+        /// <summary>
+        /// </summary>
+        /// <returns>Returns random uncollapsed cell</returns>
         private Cell GetRandomUncollapsedCell()
         {
             Cell cell = GetRandomCell();
@@ -304,23 +391,24 @@ namespace DungeonGenerator
             return cell;
         }
 
+        /// <summary>
+        /// </summary>
+        /// <returns>Returns any random cell</returns>
         private Cell GetRandomCell()
         {
             return GetCell(Random.Range(0, _rowSize), Random.Range(0, _columnSize), Random.Range(0, _dimensionsSize));
         }
 
 
-
-
-        // Helpers
-        private Cell GetCell(Cell cell)
-        {
-            return GetCell(cell.Row, cell.Column, cell.Level);
-        }
-
+        /// <summary>
+        /// </summary>
+        /// <param name="row"></param>
+        /// <param name="col"></param>
+        /// <param name="level"></param>
+        /// <returns>Returns cell from list on the given location</returns>
         private Cell GetCell(int row, int col, int level)
         {
-            if (!IsValidIndex(row, col, level))
+            if (!IsOutOfBounds(row, col, level))
             {
                 Cell cell = new();
                 cell.InitializeCell(row, col, level);
@@ -328,23 +416,34 @@ namespace DungeonGenerator
                 return cell;
             }
 
-            return Cells[CoordinateToIndex(row, col, level)];
+            return Cells[GetIndexFromCoordinate(row, col, level)];
         }
+      
 
 
-
-        private bool IsValidIndex(int row, int col, int level)
+        /// <summary>
+        /// </summary>
+        /// <param name="potentialOptions"></param>
+        /// <returns>Returns list of shuffled objects</returns>
+        private List<CellObject> GetShuffledObjects(List<CellObject> potentialOptions)
         {
-            return row >= 0 && col >= 0 && level >= 0 &&
-                row < _rowSize && col < _columnSize && level < _dimensionsSize;
+            List<CellObject> shuffledObjects = new List<CellObject>(potentialOptions);
+            for (int i = 0; i < shuffledObjects.Count; i++)
+            {
+                CellObject tempObj = shuffledObjects[i];
+                int randomIndex = Random.Range(i, shuffledObjects.Count);
+                shuffledObjects[i] = shuffledObjects[randomIndex];
+                shuffledObjects[randomIndex] = tempObj;
+            }
+            return shuffledObjects;
         }
 
-        private bool IsValidLevel(int level)
-        {
-            return level >= 0 && level < _dimensionsSize;
-        }
-
-        // Find the row/col difference to find the relative position on the grid
+        /// <summary>
+        /// Calculates the direction from - to
+        /// </summary>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <returns></returns>
         private CellDirection GetDirection(Cell from, Cell to)
         {
             int rowDif = from.Row - to.Row;
@@ -378,73 +477,61 @@ namespace DungeonGenerator
             return CellDirection.Left;
         }
 
-        private CellDirection GetOppositeDirection(CellDirection direction)
+        /// <summary>
+        /// Calculates index from coordinate
+        /// </summary>
+        /// <param name="row"></param>
+        /// <param name="column"></param>
+        /// <param name="level"></param>
+        /// <returns></returns>
+        private int GetIndexFromCoordinate(int row, int column, int level)
         {
-            int amountOfDirections = 4;
-            int dir = (int)direction + 2;
-            if (dir >= amountOfDirections)
-            {
-                dir -= amountOfDirections;
-            }
-            return (CellDirection)dir;
-        }
-
-        private CellObject GetWeightedValue(List<CellObject> potentialOptions)
-        {
-            if (potentialOptions.Count == 1)
-            {
-                return potentialOptions[0];
-            }
-            List<CellObject> shuffledList = GetShuffledObjects(potentialOptions);
-            float weightSum = 0.0f;
-            weightSum = GetWeightSum(shuffledList);
-            float randomNumber = Random.Range(0, weightSum);
-            foreach (CellObject cellObject in shuffledList)
-            {
-                // To account for floating point errors
-                if (Mathf.Abs(weightSum - cellObject.Weight) <= 0.0001f)
-                {
-                    return cellObject;
-                }
-                weightSum -= cellObject.Weight;
-
-            }
-            Debug.LogError("No valid weighted value found: " + weightSum);
-
-            return null;
-
-        }
-
-        private List<CellObject> GetShuffledObjects(List<CellObject> potentialOptions)
-        {
-            List<CellObject> shuffledObjects = new List<CellObject>(potentialOptions);
-            for (int i = 0; i < shuffledObjects.Count; i++)
-            {
-                CellObject tempObj = shuffledObjects[i];
-                int randomIndex = Random.Range(i, shuffledObjects.Count);
-                shuffledObjects[i] = shuffledObjects[randomIndex];
-                shuffledObjects[randomIndex] = tempObj;
-            }
-            return shuffledObjects;
-        }
-
-        private float GetWeightSum(List<CellObject> potentialOptions)
-        {
-            float weightSum = 0.0f;
-            foreach (CellObject option in potentialOptions)
-            {
-                weightSum += option.Weight;
-            }
-            return weightSum;
-        }
-
-
-        private int CoordinateToIndex(int row, int column, int level)
-        {
-            if (!IsValidIndex(row, column, level))
+            if (!IsOutOfBounds(row, column, level))
                 return -1;
             return row + (column * _rowSize) + (level * _rowSize * _columnSize);
         }
+#endregion
+
+        // --------------------------
+        // -- HELPER BOOL CHECKERS -- 
+        // --------------------------
+        #region Helper Boolean Getters
+        /// <summary>
+        /// </summary>
+        /// <param name="row"></param>
+        /// <param name="col"></param>
+        /// <param name="level"></param>
+        /// <returns>Returns whether or not the given coordinates are out of bounds</returns>
+        private bool IsOutOfBounds(int row, int col, int level)
+        {
+            return row >= 0 && col >= 0 && level >= 0 &&
+                row < _rowSize && col < _columnSize && level < _dimensionsSize;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="mainCell"></param>
+        /// <param name="otherCell"></param>
+        /// <param name="staircase"></param>
+        /// <returns>Returns if a staircase can be placed at the given cell</returns>
+        private bool CanPlaceStaircase(Cell mainCell, Cell otherCell, CellObject staircase)
+        {
+
+            List<Cell> neigboursAbove = GetNeighbours2D(otherCell);
+            foreach (Cell cell in neigboursAbove)
+            {
+                // Find out the direction from the neighbour to the mainCell
+                CellDirection neighbourToMain = GetDirection(cell, otherCell);
+                CellDirection mainToNeighbour = GetDirection(otherCell, cell);
+
+            }
+            return false;
+        }
+
+
+        #endregion
+
 
     }
 }

@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 02affba88803e0e429b66050bf2fb9a2, type: 3}
-  m_Name: StairsSN
+  m_Name: StairsNSOpen
   m_EditorClassIdentifier: 
-  CellPrefab: {fileID: 6502923800265893568, guid: ee773fb5a348a124593dfd3462d6e66e, type: 3}
-  Rotation: 0
-  Weight: 0.615
+  CellPrefab: {fileID: 6502923800265893568, guid: a576f10ce83f58f458f42a5b8689736f, type: 3}
+  Rotation: 180
+  Weight: 0
   AllowedNeighbourCell:
   - Direction: 0
     HasObstruction: 1
@@ -25,6 +25,6 @@ MonoBehaviour:
   - Direction: 3
     HasObstruction: 0
   - Direction: 4
-    HasObstruction: 0
-  - Direction: 5
     HasObstruction: 1
+  - Direction: 5
+    HasObstruction: 0
