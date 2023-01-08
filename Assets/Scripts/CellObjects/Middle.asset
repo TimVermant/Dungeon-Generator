@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CellPrefab: {fileID: 6647021833442842686, guid: 7dedfe4e10b23de4390a91e064de6189, type: 3}
   Rotation: 0
-  Weight: 0.961
+  Weight: 0.69
   AllowedNeighbourCell:
   - Direction: 0
     HasObstruction: 0

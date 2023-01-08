@@ -10,21 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 02affba88803e0e429b66050bf2fb9a2, type: 3}
-  m_Name: SideHallway
+  m_Name: StairsWEOpen
   m_EditorClassIdentifier: 
-  CellPrefab: {fileID: 6999034011361508550, guid: b1ffa3165f092cc4985d363f695a592f, type: 3}
+  CellPrefab: {fileID: 6502923800265893568, guid: a576f10ce83f58f458f42a5b8689736f, type: 3}
   Rotation: 90
-  Weight: 0.161
+  Weight: 0
   AllowedNeighbourCell:
   - Direction: 0
-    HasObstruction: 1
+    HasObstruction: 0
   - Direction: 1
     HasObstruction: 1
   - Direction: 2
-    HasObstruction: 0
+    HasObstruction: 1
   - Direction: 3
-    HasObstruction: 0
+    HasObstruction: 1
   - Direction: 4
     HasObstruction: 1
   - Direction: 5
-    HasObstruction: 1
+    HasObstruction: 0

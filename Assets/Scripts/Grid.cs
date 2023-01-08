@@ -9,7 +9,10 @@ namespace DungeonGenerator
     public class Grid : MonoBehaviour
     {
         public List<Cell> Cells { get; private set; } = new List<Cell>();
-        [SerializeField] private List<CellObject> _potentialCells = new List<CellObject>();
+        private List<CellObject> _potentialCells = new List<CellObject>();
+        [SerializeField] private List<CellObject> _normalCells = new List<CellObject>();
+        [SerializeField] private List<CellObject> _stairCells = new List<CellObject>();
+        private float _stairStartWeight = 0.6f;
         private int _rowSize;
         private int _columnSize;
         private int _dimensionsSize;
@@ -29,11 +32,21 @@ namespace DungeonGenerator
         public void SetupGrid(int rowSize, int colSize, int dimensionsSize)
         {
 
+
+            _potentialCells.Clear();
+            _potentialCells.AddRange(_normalCells);
+            _potentialCells.AddRange(_stairCells);
+
+            foreach (CellObject stairCell in _stairCells)
+            {
+                stairCell.Weight = _stairStartWeight;
+            }
+
             _rowSize = rowSize;
             _columnSize = colSize;
             _dimensionsSize = dimensionsSize;
 
-
+            _potentialCells[0].Weight = 0.69f;
             Cells = new List<Cell>(new Cell[rowSize * colSize * dimensionsSize]);
 
             for (int height = 0; height < _dimensionsSize; height++)
@@ -68,7 +81,7 @@ namespace DungeonGenerator
 
         }
 
-#endregion
+        #endregion
 
         // ----------------------------------------------------
         // -- FINDING AND COLLAPSING THE LOWEST ENTROPY CELL -- 
@@ -83,9 +96,10 @@ namespace DungeonGenerator
         /// <param name="parent">Transform to parent to the spawned object</param>
         public void CollapseCell(Cell cell, Transform parent)
         {
+
             CellObject value = CalculateCellValue(cell);
             cell.Collapse(value);
-
+           
             // Spawn in cell
             float startPosX = -_rowSize * 0.5f * _gridSize;
             float startPosZ = -_columnSize * 0.5f * _gridSize;
@@ -104,7 +118,7 @@ namespace DungeonGenerator
         public Cell GetLowestEntropyCell()
         {
             Cell lowestCell = GetRandomUncollapsedCell();
-            int entropy = _potentialCells.Count + 1;
+            int entropy = _potentialCells.Count;
             List<Cell> lowestCells = new();
             foreach (Cell cell in Cells)
             {
@@ -143,7 +157,7 @@ namespace DungeonGenerator
             return lowestCell;
         }
 
-#endregion
+        #endregion
 
         // ----------------------
         // -- WFC CALCULATIONS -- 
@@ -212,16 +226,7 @@ namespace DungeonGenerator
 
             }
 
-            // Removes duplicates
-            foreach (CellObject potentialCell in cellOptions)
-            {
-                if (!finalOptions.Contains(potentialCell))
-                {
-                    finalOptions.Add(potentialCell);
-                }
-            }
-
-            return finalOptions;
+            return cellOptions;
         }
 
         /// <summary>
@@ -237,19 +242,30 @@ namespace DungeonGenerator
             // Add option if it has a wall in that direction
             foreach (CellObject potentialCell in _potentialCells)
             {
-                // Extra logic when encountering staircases
-                if (!potentialCell.HasObstruction(CellDirection.Above))
+                if (!cellOptions.Contains(potentialCell))
                 {
-                    if (mainToNeighbour == CellDirection.Above && !CanPlaceStaircase(mainCell, cellItem, potentialCell))
-                    {
-                        cellOptions.Remove(potentialCell);
-                    }
+                    continue;
                 }
+
 
                 // Default checks
                 if (potentialCell.HasObstruction(mainToNeighbour) != hasWall)
                 {
                     cellOptions.Remove(potentialCell);
+                }
+
+            }
+            if (mainToNeighbour != CellDirection.Above)
+            {
+                return;
+            }
+
+            foreach (CellObject potentialStair in _stairCells)
+            {
+
+                if (cellOptions.Contains(potentialStair) && !CanPlaceStaircase(mainCell, cellItem, potentialStair))
+                {
+                    cellOptions.Remove(potentialStair);
                 }
 
             }
@@ -300,7 +316,7 @@ namespace DungeonGenerator
             }
             return weightSum;
         }
-#endregion
+        #endregion
 
         // ---------------------
         // -- HELPER GETTERS -- 
@@ -418,7 +434,7 @@ namespace DungeonGenerator
 
             return Cells[GetIndexFromCoordinate(row, col, level)];
         }
-      
+
 
 
         /// <summary>
@@ -478,6 +494,31 @@ namespace DungeonGenerator
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="direction"></param>
+        /// <returns>Returns the opposite direction</returns>
+        private CellDirection GetOppositeDirection(CellDirection direction)
+        {
+            switch (direction)
+            {
+                case CellDirection.Right:
+                    return CellDirection.Left;
+                case CellDirection.Left:
+                    return CellDirection.Right;
+                case CellDirection.Front:
+                    return CellDirection.Back;
+                case CellDirection.Back:
+                    return CellDirection.Front;
+                case CellDirection.Above:
+                    return CellDirection.Below;
+                case CellDirection.Below:
+                    return CellDirection.Above;
+            }
+            return CellDirection.DirectionCount;
+        }
+
+        /// <summary>
         /// Calculates index from coordinate
         /// </summary>
         /// <param name="row"></param>
@@ -490,7 +531,21 @@ namespace DungeonGenerator
                 return -1;
             return row + (column * _rowSize) + (level * _rowSize * _columnSize);
         }
-#endregion
+
+
+        private Cell GetNeighbourCell(Cell mainCell, CellDirection direction)
+        {
+
+            foreach (Cell cell in GetNeighbours2D(mainCell))
+            {
+                if (GetDirection(mainCell, cell) == direction)
+                {
+                    return cell;
+                }
+            }
+            return null;
+        }
+        #endregion
 
         // --------------------------
         // -- HELPER BOOL CHECKERS -- 
@@ -518,15 +573,37 @@ namespace DungeonGenerator
         private bool CanPlaceStaircase(Cell mainCell, Cell otherCell, CellObject staircase)
         {
 
-            List<Cell> neigboursAbove = GetNeighbours2D(otherCell);
-            foreach (Cell cell in neigboursAbove)
-            {
-                // Find out the direction from the neighbour to the mainCell
-                CellDirection neighbourToMain = GetDirection(cell, otherCell);
-                CellDirection mainToNeighbour = GetDirection(otherCell, cell);
 
+
+            List<Cell> neighboursBelow = GetNeighbours2D(mainCell);
+            List<Cell> neigboursAbove = GetNeighbours2D(otherCell);
+            CellDirection openDirection = staircase.GetOpenDirection2D();
+            CellDirection openDirectionOpposite = GetOppositeDirection(openDirection);
+
+            Cell opposingCell = GetNeighbourCell(otherCell, openDirectionOpposite);
+            Cell wallCell = GetNeighbourCell(otherCell, openDirection);
+            // Can't be out of bounds
+            if (opposingCell.IsOutsideEdge || otherCell.IsOutsideEdge)
+            {
+                return false;
             }
-            return false;
+
+            if (opposingCell.CurrentCellObject != null && opposingCell.CurrentCellObject.HasObstruction(openDirection))
+
+            {
+                return false;
+            }
+            //foreach (Cell neighbour in neigboursAbove)
+            //{
+            //    if (neighbour.CurrentCellObject != null && neighbour != wallCell &&
+            //        !neighbour.CurrentCellObject.HasObstruction(openDirection))
+
+            //    {
+            //        return true;
+            //    }
+            //}
+
+            return true;
         }
 
 

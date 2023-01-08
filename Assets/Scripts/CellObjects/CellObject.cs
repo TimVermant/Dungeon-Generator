@@ -7,12 +7,16 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/CellObject", order = 1)]
 public class CellObject : ScriptableObject
 {
+    // Prefab variables
     public GameObject CellPrefab;
     public float Rotation = 0;
+    // WFC variables
     [Range(0f, 1f)]
     public float Weight = 1f;
-    
     public List<CellObjectNeighbbourDirection> AllowedNeighbourCell = new List<CellObjectNeighbbourDirection>(new CellObjectNeighbbourDirection[(int)CellDirection.DirectionCount]);
+    
+
+    // Helper fnctions
     [HideInInspector]
     public CellObjectNeighbbourDirection GetAllowedNeighbourInDirection(CellDirection direction)
     {
@@ -25,12 +29,37 @@ public class CellObject : ScriptableObject
         }
         return null;
     }
-  
+
+    [HideInInspector]
+    public CellDirection GetOpenDirection()
+    {
+        foreach (CellObjectNeighbbourDirection cellObjectNeighbourRules in AllowedNeighbourCell)
+        {
+            if (!cellObjectNeighbourRules.HasObstruction)
+            {
+                return cellObjectNeighbourRules.Direction;
+            }
+        }
+        return CellDirection.DirectionCount;
+    }
+
+    public CellDirection GetOpenDirection2D()
+    {
+        foreach (CellObjectNeighbbourDirection cellObjectNeighbourRules in AllowedNeighbourCell)
+        {
+            if (!cellObjectNeighbourRules.HasObstruction && (int)cellObjectNeighbourRules.Direction < 4)
+            {
+                return cellObjectNeighbourRules.Direction;
+            }
+        }
+        return CellDirection.DirectionCount;
+    }
     public bool HasObstruction(CellDirection direction)
     {
         CellObjectNeighbbourDirection cellObjectNeighbourDirection = GetAllowedNeighbourInDirection(direction);
         return cellObjectNeighbourDirection.HasObstruction;
     }
+
 }
 
 [Serializable]
