@@ -17,9 +17,9 @@ MonoBehaviour:
   Weight: 1
   AllowedNeighbourCell:
   - Direction: 0
-    HasObstruction: 1
+    HasObstruction: 0
   - Direction: 1
-    HasObstruction: 1
+    HasObstruction: 0
   - Direction: 2
     HasObstruction: 1
   - Direction: 3

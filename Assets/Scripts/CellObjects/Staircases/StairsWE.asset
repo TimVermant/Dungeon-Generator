@@ -21,9 +21,9 @@ MonoBehaviour:
   - Direction: 1
     HasObstruction: 0
   - Direction: 2
-    HasObstruction: 1
+    HasObstruction: 0
   - Direction: 3
-    HasObstruction: 1
+    HasObstruction: 0
   - Direction: 4
     HasObstruction: 0
   - Direction: 5

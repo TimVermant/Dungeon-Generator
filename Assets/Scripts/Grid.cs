@@ -263,7 +263,7 @@ namespace DungeonGenerator
             foreach (CellObject potentialStair in _stairCells)
             {
 
-                if (cellOptions.Contains(potentialStair) && !CanPlaceStaircase(mainCell, cellItem, potentialStair))
+                if (cellOptions.Contains(potentialStair) /*&& !CanPlaceStaircase(mainCell, cellItem, potentialStair)*/)
                 {
                     cellOptions.Remove(potentialStair);
                 }
