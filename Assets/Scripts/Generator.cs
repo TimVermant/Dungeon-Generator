@@ -1,7 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using DungeonGenerator;
 
 public class Generator : MonoBehaviour
 {
@@ -17,6 +18,15 @@ public class Generator : MonoBehaviour
     [SerializeField] private int _maxIterations = 0; // If this variable is 0 we loop infinitely
     private int _iterationCounter = 0;
 
+    [Header("Random weight sliders")]
+    [Range(0f, 1f)]
+    [SerializeField] private float _wallWeight = 0.48f;
+    [Range(0f, 1f)]
+    [SerializeField] private float _stairWeight = 0.6f;
+    [Range(0f, 1f)]
+    [SerializeField] private float _hallwayWeight = 0.48f;
+    [Range(0f, 1f)]
+    [SerializeField] private float _cornerWeight = 0.48f;
 
     public bool IsCollapsed
     {
@@ -31,6 +41,18 @@ public class Generator : MonoBehaviour
             }
 
             return true;
+        }
+    }
+
+    public void OnValidate()
+    {
+        if(_grid)
+        {
+            _grid.WallWeight = _wallWeight;
+            _grid.StairWeight = _stairWeight;
+            _grid.HallwayWeight = _hallwayWeight;
+            _grid.CornerWeight = _cornerWeight;
+            _grid.SetupWeights();
         }
     }
 

@@ -9,6 +9,10 @@ namespace DungeonGenerator
     public class Grid : MonoBehaviour
     {
         public List<Cell> Cells { get; private set; } = new List<Cell>();
+        public float WallWeight { get; set; }
+        public float HallwayWeight{ get; set; }
+        public float CornerWeight { get; set; }
+        public float StairWeight { get; set; }
         private List<CellObject> _potentialCells = new List<CellObject>();
         [SerializeField] private List<CellObject> _wallCells = new List<CellObject>();
         [SerializeField] private List<CellObject> _hallwayCells = new List<CellObject>();
@@ -58,6 +62,29 @@ namespace DungeonGenerator
             for (int height = 0; height < _dimensionsSize; height++)
             {
                 SetupLevel(height);
+            }
+        }
+
+        public void SetupWeights()
+        {
+            foreach(CellObject cell in _wallCells)
+            {
+                cell.Weight = WallWeight;
+            }
+
+            foreach (CellObject cell in _stairCells)
+            {
+                cell.Weight = StairWeight;
+            }
+
+            foreach (CellObject cell in _cornerCells)
+            {
+                cell.Weight = CornerWeight;
+            }
+
+            foreach (CellObject cell in _hallwayCells)
+            {
+                cell.Weight = HallwayWeight;
             }
         }
 
