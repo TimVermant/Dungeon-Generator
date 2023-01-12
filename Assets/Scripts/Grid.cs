@@ -10,8 +10,11 @@ namespace DungeonGenerator
     {
         public List<Cell> Cells { get; private set; } = new List<Cell>();
         private List<CellObject> _potentialCells = new List<CellObject>();
-        [SerializeField] private List<CellObject> _normalCells = new List<CellObject>();
+        [SerializeField] private List<CellObject> _wallCells = new List<CellObject>();
+        [SerializeField] private List<CellObject> _hallwayCells = new List<CellObject>();
+        [SerializeField] private List<CellObject> _cornerCells = new List<CellObject>();
         [SerializeField] private List<CellObject> _stairCells = new List<CellObject>();
+        [SerializeField] private List<CellObject> _specialCells = new List<CellObject>();
         private float _stairStartWeight = 0.6f;
         private int _rowSize;
         private int _columnSize;
@@ -34,8 +37,11 @@ namespace DungeonGenerator
 
 
             _potentialCells.Clear();
-            _potentialCells.AddRange(_normalCells);
+            _potentialCells.AddRange(_wallCells);
             _potentialCells.AddRange(_stairCells);
+            _potentialCells.AddRange(_cornerCells);
+            _potentialCells.AddRange(_hallwayCells);
+            _potentialCells.AddRange(_specialCells);
 
             foreach (CellObject stairCell in _stairCells)
             {
