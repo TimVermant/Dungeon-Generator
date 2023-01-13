@@ -13,6 +13,7 @@ public class CellObject : ScriptableObject
     // WFC variables
     [Range(0f, 1f)]
     public float Weight = 1f;
+    public bool IsStair = false;
     public List<CellObjectNeighbbourDirection> AllowedNeighbourCell = new List<CellObjectNeighbbourDirection>(new CellObjectNeighbbourDirection[(int)CellDirection.DirectionCount]);
     
 

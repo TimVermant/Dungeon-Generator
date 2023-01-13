@@ -132,7 +132,8 @@ namespace DungeonGenerator
         {
 
             CellObject value = CalculateCellValue(cell);
-            cell.Collapse(value);
+            cell.Collapse(value, _stairCells.Contains(value));
+
             CollapsedCells.Add(cell);
             // Spawn in cell
             float startPosX = -_rowSize * 0.5f * _gridSize;
@@ -224,11 +225,18 @@ namespace DungeonGenerator
             // Randomize if no neighbours
             if (potentialValues.Count == 0)
             {
+
                 cellValue = CalculateWeightedValue(_potentialCells);
+
             }
             else
             {
+                if(NeedsStairs(cell.Level))
+                {
+                   potentialValues = GetStairObjects(potentialValues);
+                }
                 cellValue = CalculateWeightedValue(potentialValues);
+
             }
             return cellValue;
         }
@@ -316,6 +324,8 @@ namespace DungeonGenerator
             {
                 return potentialOptions[0];
             }
+
+
             List<CellObject> shuffledList = GetShuffledObjects(potentialOptions);
             float weightSum = 0.0f;
             weightSum = CalculateWeightSum(shuffledList);
@@ -579,6 +589,37 @@ namespace DungeonGenerator
             }
             return null;
         }
+
+        private List<Cell> GetCollapsedCellsOnLevel(int level)
+        {
+            List<Cell> cells = new List<Cell>();
+            foreach (Cell cell in CollapsedCells)
+            {
+                if (cell.Level == level)
+                {
+                    cells.Add(cell);
+                }
+            }
+            return cells;
+        }
+
+        private List<CellObject> GetStairObjects(List<CellObject> cells)
+        {
+            List<CellObject> stairs = new List<CellObject>();
+            foreach (CellObject cell in cells)
+            {
+                if(cell.IsStair)
+                {
+                    stairs.Add(cell);
+                }
+            }
+            // Returns back the original list when it can't find any stairs
+            if(stairs.Count == 0)
+            {
+                return cells;
+            }
+            return stairs;
+        }
         #endregion
 
         // --------------------------
@@ -627,20 +668,21 @@ namespace DungeonGenerator
             {
                 return false;
             }
-            //foreach (Cell neighbour in neigboursAbove)
-            //{
-            //    if (neighbour.CurrentCellObject != null && neighbour != wallCell &&
-            //        !neighbour.CurrentCellObject.HasObstruction(openDirection))
-
-            //    {
-            //        return true;
-            //    }
-            //}
 
             return true;
         }
 
-
+        private bool NeedsStairs(int level)
+        {
+            foreach (Cell cell in GetCollapsedCellsOnLevel(level))
+            {
+                if (cell.IsStair)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
 
 
         #endregion

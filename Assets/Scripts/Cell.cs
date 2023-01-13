@@ -9,6 +9,7 @@ public class Cell
     public CellObject CurrentCellObject { get; private set; }
     public bool IsCollapsed { get; private set; }
     public bool IsOutsideEdge { get; private set; }
+    public bool IsStair { get; private set; }
     public int Row { get; private set; }
     public int Column { get; private set; }
     public int Level { get; private set; }
@@ -31,11 +32,11 @@ public class Cell
         IsCollapsed = true;
     }
 
-    public void Collapse(CellObject cellObject)
+    public void Collapse(CellObject cellObject, bool isStair)
     {
         CurrentCellObject = cellObject;
         IsCollapsed = true;
-
+        IsStair = isStair;
     }
 
     public void InstantiateCell(Vector3 pos,Transform parent)
