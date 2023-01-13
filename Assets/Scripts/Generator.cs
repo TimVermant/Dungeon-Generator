@@ -28,6 +28,8 @@ public class Generator : MonoBehaviour
     [Range(0f, 1f)]
     [SerializeField] private float _cornerWeight = 0.48f;
 
+    [SerializeField] private List<ExampleObject> _exampleObjects = new List<ExampleObject>();
+
     public bool IsCollapsed
     {
         get
@@ -46,14 +48,7 @@ public class Generator : MonoBehaviour
 
     public void OnValidate()
     {
-        if(_grid)
-        {
-            _grid.WallWeight = _wallWeight;
-            _grid.StairWeight = _stairWeight;
-            _grid.HallwayWeight = _hallwayWeight;
-            _grid.CornerWeight = _cornerWeight;
-            _grid.SetupWeights();
-        }
+        UpdateWeights();
     }
 
     public void CollapseGrid()
@@ -92,6 +87,29 @@ public class Generator : MonoBehaviour
     }
 
 
+    // Examples
+    public void Example(int index)
+    {
+
+        ExampleObject exampleObject = _exampleObjects[index];
+        if(exampleObject == null)
+        {
+            return;
+        }
+        _rows = exampleObject.Rows;
+        _columns = exampleObject.Columns;
+        _levels = exampleObject.Levels;
+
+        _wallWeight = exampleObject.WallWeight;
+        _stairWeight= exampleObject.StairWeight;
+        _hallwayWeight = exampleObject.HallwayWeight;
+        _cornerWeight = exampleObject.CornerWeight;
+        UpdateWeights();
+
+        CollapseGrid();
+    }
+
+
     private void CollapseCell()
     {
         // Find and collapse lowest entropy cell
@@ -100,7 +118,17 @@ public class Generator : MonoBehaviour
         _grid.CollapseCell(cell, _gridParent);
     }
 
-
+    private void UpdateWeights()
+    {
+        if (_grid)
+        {
+            _grid.WallWeight = _wallWeight;
+            _grid.StairWeight = _stairWeight;
+            _grid.HallwayWeight = _hallwayWeight;
+            _grid.CornerWeight = _cornerWeight;
+            _grid.SetupWeights();
+        }
+    }
 
 
 }

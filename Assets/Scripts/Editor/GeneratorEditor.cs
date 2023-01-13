@@ -20,8 +20,12 @@ public class GeneratorEditor : Editor
         {
             generator.CollapseGrid();
         }
-
-   
+        EditorGUILayout.Space(10);
+        GUILayout.Label("Examples");
+        if(GUILayout.Button("Example1"))
+        {
+            generator.Example(0);
+        }
     }
 
 }

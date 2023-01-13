@@ -9,8 +9,9 @@ namespace DungeonGenerator
     public class Grid : MonoBehaviour
     {
         public List<Cell> Cells { get; private set; } = new List<Cell>();
+        public List<Cell> CollapsedCells { get; private set; } = new List<Cell>();
         public float WallWeight { get; set; }
-        public float HallwayWeight{ get; set; }
+        public float HallwayWeight { get; set; }
         public float CornerWeight { get; set; }
         public float StairWeight { get; set; }
         private List<CellObject> _potentialCells = new List<CellObject>();
@@ -67,7 +68,7 @@ namespace DungeonGenerator
 
         public void SetupWeights()
         {
-            foreach(CellObject cell in _wallCells)
+            foreach (CellObject cell in _wallCells)
             {
                 cell.Weight = WallWeight;
             }
@@ -132,7 +133,7 @@ namespace DungeonGenerator
 
             CellObject value = CalculateCellValue(cell);
             cell.Collapse(value);
-           
+            CollapsedCells.Add(cell);
             // Spawn in cell
             float startPosX = -_rowSize * 0.5f * _gridSize;
             float startPosZ = -_columnSize * 0.5f * _gridSize;
@@ -638,6 +639,8 @@ namespace DungeonGenerator
 
             return true;
         }
+
+
 
 
         #endregion
