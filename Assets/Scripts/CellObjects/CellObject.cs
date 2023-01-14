@@ -58,6 +58,10 @@ public class CellObject : ScriptableObject
     public bool HasObstruction(CellDirection direction)
     {
         CellObjectNeighbbourDirection cellObjectNeighbourDirection = GetAllowedNeighbourInDirection(direction);
+        if(cellObjectNeighbourDirection == null)
+        {
+            return true;
+        }
         return cellObjectNeighbourDirection.HasObstruction;
     }
 

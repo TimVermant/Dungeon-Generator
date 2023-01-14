@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DungeonGenerator;
+using Unity.VisualScripting;
 
 public class Generator : MonoBehaviour
 {
@@ -57,7 +58,7 @@ public class Generator : MonoBehaviour
         _iterationCounter = 0;
         _grid.SetupGrid(_rows, _columns, _levels);
         string name = "Level ";
-        for(int i =0; i < _levels;i++)
+        for (int i = 0; i < _levels; i++)
         {
             GameObject levelObj = new GameObject(name + i);
             levelObj.transform.parent = _gridParent;
@@ -86,13 +87,35 @@ public class Generator : MonoBehaviour
         _grid.Cells.Clear();
     }
 
+    public void GenerateExample(int index)
+    {
+        ExampleObject exampleObject = new ExampleObject();
+        exampleObject.name = "Example" + (index + 1);
+
+        exampleObject.Rows = _rows;
+        exampleObject.Columns = _columns;
+        exampleObject.Levels = _levels;
+
+        exampleObject.WallWeight = _wallWeight;
+        exampleObject.StairWeight = _stairWeight;
+        exampleObject.HallwayWeight = _hallwayWeight;
+        exampleObject.CornerWeight = _cornerWeight;
+        _exampleObjects.Add(exampleObject);
+    }
+
+    public void ClearExample(int index)
+    {
+        DestroyImmediate(_exampleObjects[index]);
+        _exampleObjects.RemoveAt(index);
+
+    }
 
     // Examples
     public void Example(int index)
     {
 
         ExampleObject exampleObject = _exampleObjects[index];
-        if(exampleObject == null)
+        if (exampleObject == null)
         {
             return;
         }
@@ -101,7 +124,7 @@ public class Generator : MonoBehaviour
         _levels = exampleObject.Levels;
 
         _wallWeight = exampleObject.WallWeight;
-        _stairWeight= exampleObject.StairWeight;
+        _stairWeight = exampleObject.StairWeight;
         _hallwayWeight = exampleObject.HallwayWeight;
         _cornerWeight = exampleObject.CornerWeight;
         UpdateWeights();

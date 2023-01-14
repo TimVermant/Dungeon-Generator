@@ -14,12 +14,14 @@ namespace DungeonGenerator
         public float HallwayWeight { get; set; }
         public float CornerWeight { get; set; }
         public float StairWeight { get; set; }
+        private Cell _firstCell = null;
         private List<CellObject> _potentialCells = new List<CellObject>();
         [SerializeField] private List<CellObject> _wallCells = new List<CellObject>();
         [SerializeField] private List<CellObject> _hallwayCells = new List<CellObject>();
         [SerializeField] private List<CellObject> _cornerCells = new List<CellObject>();
         [SerializeField] private List<CellObject> _stairCells = new List<CellObject>();
         [SerializeField] private List<CellObject> _specialCells = new List<CellObject>();
+        [SerializeField] private List<CellObject> _emptyCells = new List<CellObject>();
         private float _stairStartWeight = 0.6f;
         private int _rowSize;
         private int _columnSize;
@@ -39,7 +41,7 @@ namespace DungeonGenerator
         /// <param name="dimensionsSize">The amount of levels</param>
         public void SetupGrid(int rowSize, int colSize, int dimensionsSize)
         {
-
+            _firstCell = null;
 
             _potentialCells.Clear();
             _potentialCells.AddRange(_wallCells);
@@ -91,7 +93,7 @@ namespace DungeonGenerator
 
         private void SetupLevel(int level)
         {
-
+            CollapsedCells.Clear();
             int index = 0;
 
             // Loops and initializes the grid 
@@ -131,10 +133,21 @@ namespace DungeonGenerator
         public void CollapseCell(Cell cell, Transform parent)
         {
 
-            CellObject value = CalculateCellValue(cell);
-            cell.Collapse(value, _stairCells.Contains(value));
+            CellObject value = CalculateCellValue(cell, new());
 
-            CollapsedCells.Add(cell);
+           
+            if (value == null)
+            {
+                cell.Collapse(_emptyCells[0], false);
+                CollapsedCells.Add(cell);
+            }
+            else
+            {
+                cell.Collapse(value, _stairCells.Contains(value));
+            }
+
+     
+
             // Spawn in cell
             float startPosX = -_rowSize * 0.5f * _gridSize;
             float startPosZ = -_columnSize * 0.5f * _gridSize;
@@ -215,10 +228,17 @@ namespace DungeonGenerator
         /// </summary>
         /// <param name="cell">The given cell from which we need to know the value</param>
         /// <returns>The calculated value</returns>
-        private CellObject CalculateCellValue(Cell cell)
+        private CellObject CalculateCellValue(Cell cell, List<CellObject> invalidOptions)
         {
-
-            List<CellObject> potentialValues = CalculatePossibleVariations(cell, GetCollapsedNeighbours(cell));
+            List<Cell> collapsedNeighbours = GetCollapsedNeighbours(cell);
+            List<CellObject> potentialValues = CalculatePossibleVariations(cell, collapsedNeighbours);
+            if (invalidOptions.Count > 0)
+            {
+                foreach (CellObject value in invalidOptions)
+                {
+                    potentialValues.Remove(value);
+                }
+            }
 
             CellObject cellValue = null;
 
@@ -226,14 +246,13 @@ namespace DungeonGenerator
             if (potentialValues.Count == 0)
             {
 
-                cellValue = CalculateWeightedValue(_potentialCells);
-
+                return null;
             }
             else
             {
-                if(NeedsStairs(cell.Level))
+                if (NeedsStairs(cell.Level))
                 {
-                   potentialValues = GetStairObjects(potentialValues);
+                    potentialValues = GetStairObjects(potentialValues);
                 }
                 cellValue = CalculateWeightedValue(potentialValues);
 
@@ -362,6 +381,17 @@ namespace DungeonGenerator
         }
         #endregion
 
+        // ----------------------
+        // -- PATHFINDING -- 
+        // ----------------------
+        #region pathfinding
+
+        public void IsConnected(Cell cell, CellObject potentialValue)
+        {
+
+        }
+
+        #endregion
         // ---------------------
         // -- HELPER GETTERS -- 
         // ---------------------
@@ -608,13 +638,13 @@ namespace DungeonGenerator
             List<CellObject> stairs = new List<CellObject>();
             foreach (CellObject cell in cells)
             {
-                if(cell.IsStair)
+                if (cell.IsStair)
                 {
                     stairs.Add(cell);
                 }
             }
             // Returns back the original list when it can't find any stairs
-            if(stairs.Count == 0)
+            if (stairs.Count == 0)
             {
                 return cells;
             }
@@ -683,6 +713,7 @@ namespace DungeonGenerator
             }
             return true;
         }
+
 
 
         #endregion

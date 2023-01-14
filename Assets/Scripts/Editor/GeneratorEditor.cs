@@ -6,6 +6,8 @@ using UnityEditor;
 [CustomEditor(typeof(Generator))]
 public class GeneratorEditor : Editor
 {
+    private int _CurrentIndex = 1;
+
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
@@ -22,10 +24,27 @@ public class GeneratorEditor : Editor
         }
         EditorGUILayout.Space(10);
         GUILayout.Label("Examples");
-        if(GUILayout.Button("Example1"))
+        if (GUILayout.Button("Generate Example"))
         {
-            generator.Example(0);
+            generator.GenerateExample(_CurrentIndex);
+            _CurrentIndex++;
         }
+
+        for(int i =0; i < _CurrentIndex;i++)
+        {
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("Example "+(i+1)))
+            {
+                generator.Example(i);
+            }
+            if(GUILayout.Button("Clear Example " + (i+1)))
+            {
+                generator.ClearExample(i);
+                _CurrentIndex--;
+            }
+            GUILayout.EndHorizontal();
+        }
+       
     }
 
 }
