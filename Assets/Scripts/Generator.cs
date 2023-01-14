@@ -29,7 +29,7 @@ public class Generator : MonoBehaviour
     [Range(0f, 1f)]
     [SerializeField] private float _cornerWeight = 0.48f;
 
-    [SerializeField] private List<ExampleObject> _exampleObjects = new List<ExampleObject>();
+    private List<ExampleObject> _exampleObjects = new List<ExampleObject>();
 
     public bool IsCollapsed
     {

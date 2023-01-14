@@ -135,18 +135,18 @@ namespace DungeonGenerator
 
             CellObject value = CalculateCellValue(cell, new());
 
-           
+
             if (value == null)
             {
                 cell.Collapse(_emptyCells[0], false);
-                CollapsedCells.Add(cell);
             }
             else
             {
                 cell.Collapse(value, _stairCells.Contains(value));
             }
+            CollapsedCells.Add(cell);
 
-     
+
 
             // Spawn in cell
             float startPosX = -_rowSize * 0.5f * _gridSize;
@@ -711,6 +711,7 @@ namespace DungeonGenerator
                     return false;
                 }
             }
+
             return true;
         }
 
