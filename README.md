@@ -7,46 +7,21 @@ Digital Arts and Entertainment
 Howest.be
 
  
-CONTENTS
-ABSTRACT	2
-INTRODUCTION	3
-RELATED WORK	4
-1.	Wave function collapse	4
-1.1.	About wave function collapse	4
-1.2.	Why wave function collapse?	4
-2.	Procedural dungeon generator	5
-2.1.	WFC applied to a dungeon generator	5
-2.2.	GEnerating a 3D Layout	5
-CASE STUDY	6
-1.	introduction	6
-1.1.	Intro	6
-2.	WFc algorithm	6
-2.1.	Basic implementation	6
-3.	2D dungeon generator	7
-3.1.	Basic implementation	7
-3.2.	additional logic detached from the algorithm	8
-4.	3D dungeon generator	9
-4.1.	Basic implementation	9
-4.2.	difficulty going from 2d to 3d	9
-DISCUSSION	10
-CONCLUSION & FUTURE WORK	10
-APPENDICES	12
-
  
-ABSTRACT
+# ABSTRACT
 This paper will attempt to delve deep into the workings of the wave function collapse algorithm, how it could be used for generating 3D dungeon layouts and its practical usefulness inside of a gameplay context. The WFC algorithm itself is already fairly common among procedural content generation, and as such was a good candidate in attempting to create a working generator. 
 By researching the algorithm itself and experimenting with a possible form of a dungeon generator, this paper showcases that it is definitely possible to achieve a working 3D dungeon generator and goes more in depth as to how well it does that and its limitations. The algorithm achieves this goal due to its main advantage being the adaptability to different layouts when going from a 2D layout to a 3D layout. The main issues it comes across are the fact that it has trouble generating certain dungeon layouts as opposed to others, for instance when generating a layout with smaller rooms connected to each other via corridors. While we do maintain some control over the result, the algorithm will always have a hint of randomness to it which in turn makes it so you can’t clearly define where a room might start or end. 
-INTRODUCTION
+# INTRODUCTION
 How possible is it to make a 3D dungeon generator applying the wave function collapse algorithm? Although there are many algorithmic ways to go about creating a working 3D dungeon generator, the wave function collapse algorithm tends to have certain advantages making it desirable over other similar answers. It is a constraint based programming algorithm which allows for easy adaptability into different forms of layouts making it very useful when wanting to update the algorithm for example from 2D space into 3D space. 
 While there are many possibilities as to what one might consider to be a dungeon, there are certain factors that are considered important when talking about the generated dungeons. They need to be procedurally generated, with the user having the ability to control the size of the dungeon and the frequency at which each piece could spawn. The dungeon also needs to be functional in the sense that it needs to allow for a player to walk through and reach every possible room from its starting position. 
 This paper will attempt to further delve into and explain the inner workings of a WFC algorithm inside the context of a dungeon generator. We research and experiment exactly how the algorithm itself works and its usefulness when used for generating a 3D dungeon layout. 
 RELATED WORK
-1.	WAVE FUNCTION COLLAPSE
-1.1.	ABOUT WAVE FUNCTION COLLAPSE
+##	WAVE FUNCTION COLLAPSE
+###	ABOUT WAVE FUNCTION COLLAPSE
 The Wave Function Collapse algorithm [1] is an constraint based programming algorithm[4]. With constraint programming you supply the computer with a clearly defined problem, which it then will try to find the best solution for on its own using the specified methods supplied by the user. 
 The way the WFC algorithm works is by firstly taking a given input and generating an array with the dimensions of the desired output. With a set of rules, the algorithm then proceeds to try and collapse every element into its definite state, by collapsing a node you give it its final value and mark it as a collapsed node. It does this by looping over and finding the element with the lowest entropy, entropy meaning the amount of possible values a node could have after applying all the given rules, randomly selecting one of the possible states and finally collapsing that element, giving it its final value. Once it’s looped over and collapsed every given element, the code will exit and return the output. 
 Due to those forementioned reasons, this algorithm does not only return a randomly generated output based on how you set it up, but it will also make sure that 2 random outputs with the same rules will result in 2 similar results. This allows for procedural content generation while still producing similar results which could be an advantage when wanting to produce consistently similar results as seen in the above figure 1. 
-1.2.	WHY WAVE FUNCTION COLLAPSE?
+###	WHY WAVE FUNCTION COLLAPSE?
 When talking about possible algorithms for generating a dungeon or likewise procedural content generation, there are quite a few options as stated per [6]. A notable example of this being Cellular automata, a somewhat similar algorithm to wave function collapse. 
 
 It works by taking a noise grid as seen in the below figure 3 on the left, it will then iterate over the given grid X amount of times, the amount of times you iterate over the grid will also determine the eventual result you get. We will then on each individual tile check its neighboring tiles, meaning on a 2D grid the 8 surrounding tiles, and depending on the rules you give it will then transform that tile. The terminology for considering all 8 surrounding neighbors is referred to as a ‘Moore Neighborhood’ inside of cellular automata. For example if you have a rule that anything above 4 wall neighbors means you fill it in and anything less you don’t, the more you iterate over this grid the more it starts to form a shape as seen in the below figure 3 on the right. 
