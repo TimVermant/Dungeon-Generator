@@ -1,10 +1,10 @@
 
 
-Vermant Tim
-Making a dungeon generator with a 3D navigation layout using the wave function collapse algorithm
-Graduation work 2022-2023
-Digital Arts and Entertainment
-Howest.be
+Vermant Tim <br/>
+Making a dungeon generator with a 3D navigation layout using the wave function collapse algorithm<br/>
+Graduation work 2022-2023<br/>
+Digital Arts and Entertainment<br/><br/>
+Howest.be<br/>
 
  
  
