@@ -15,7 +15,7 @@ By researching the algorithm itself and experimenting with a possible form of a 
 How possible is it to make a 3D dungeon generator applying the wave function collapse algorithm? Although there are many algorithmic ways to go about creating a working 3D dungeon generator, the wave function collapse algorithm tends to have certain advantages making it desirable over other similar answers. It is a constraint based programming algorithm which allows for easy adaptability into different forms of layouts making it very useful when wanting to update the algorithm for example from 2D space into 3D space. 
 While there are many possibilities as to what one might consider to be a dungeon, there are certain factors that are considered important when talking about the generated dungeons. They need to be procedurally generated, with the user having the ability to control the size of the dungeon and the frequency at which each piece could spawn. The dungeon also needs to be functional in the sense that it needs to allow for a player to walk through and reach every possible room from its starting position. 
 This paper will attempt to further delve into and explain the inner workings of a WFC algorithm inside the context of a dungeon generator. We research and experiment exactly how the algorithm itself works and its usefulness when used for generating a 3D dungeon layout. 
-RELATED WORK
+# RELATED WORK
 ##	WAVE FUNCTION COLLAPSE
 ###	ABOUT WAVE FUNCTION COLLAPSE
 The Wave Function Collapse algorithm [1] is an constraint based programming algorithm[4]. With constraint programming you supply the computer with a clearly defined problem, which it then will try to find the best solution for on its own using the specified methods supplied by the user. <br/>
