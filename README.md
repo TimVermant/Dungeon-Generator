@@ -22,6 +22,8 @@ The Wave Function Collapse algorithm [1] is an constraint based programming algo
 ![image](https://user-images.githubusercontent.com/40210931/213728637-67e0d282-091c-4595-b695-667c934b2833.png)
 
 The way the WFC algorithm works is by firstly taking a given input and generating an array with the dimensions of the desired output. With a set of rules, the algorithm then proceeds to try and collapse every element into its definite state, by collapsing a node you give it its final value and mark it as a collapsed node. It does this by looping over and finding the element with the lowest entropy, entropy meaning the amount of possible values a node could have after applying all the given rules, randomly selecting one of the possible states and finally collapsing that element, giving it its final value. Once it’s looped over and collapsed every given element, the code will exit and return the output. 
+![image](https://github.com/TimVermant/Dungeon-Generator/assets/40210931/2cce000f-4cb2-43f6-aaad-22ad62dde3b5)
+
 Due to those forementioned reasons, this algorithm does not only return a randomly generated output based on how you set it up, but it will also make sure that 2 random outputs with the same rules will result in 2 similar results. This allows for procedural content generation while still producing similar results which could be an advantage when wanting to produce consistently similar results as seen in the above figure 1. 
 ###	WHY WAVE FUNCTION COLLAPSE?
 When talking about possible algorithms for generating a dungeon or likewise procedural content generation, there are quite a few options as stated per [6]. A notable example of this being Cellular automata, a somewhat similar algorithm to wave function collapse. 
